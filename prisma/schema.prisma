@@ -20,3 +20,45 @@ model Admin {
   password String
   createdAt DateTime @default(now())
 }
+
+model Booking {
+  id             String   @id @default(cuid())
+  invoiceId      String   @unique               // Contoh: INV-20250707-ABC12
+
+  name           String                         // Nama customer
+  email          String                         // Untuk verifikasi dan notifikasi
+  phone          String                         // Opsional tapi berguna
+
+  package        Package  @relation(fields: [packageId], references: [id])
+  packageId      String
+
+  date           DateTime                       // Tanggal booking
+  startTime      String                         // Contoh: "14:00"
+  status         BookingStatus @default(PENDING)
+
+  paymentMethod  String?                        // Metode dari Midtrans (QRIS, GoPay, BCA, dll)
+  paymentStatus  String?                        // paid | pending | expired | etc
+  paidAt         DateTime?                      // Jika pembayaran berhasil
+  canceledAt     DateTime?                      // Jika dibatalkan
+
+  createdAt      DateTime   @default(now())
+}
+
+model Package {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Int       // dalam rupiah
+  duration    Int       // dalam menit
+  image       String?   // URL/relative path
+
+  bookings    Booking[]
+  createdAt   DateTime @default(now())
+}
+
+enum BookingStatus {
+  PENDING      // belum dibayar
+  PAID         // sudah dibayar
+  CANCELED     // dibatalkan oleh customer
+  COMPLETED    // sudah selesai (opsional untuk future)
+}
