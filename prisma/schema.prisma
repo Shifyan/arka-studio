@@ -22,20 +22,22 @@ model Booking {
   email          String
   phone          String
 
-  package        Package  @relation(fields: [packageId], references: [id])
   packageId      String
+  package        Package  @relation(fields: [packageId], references: [id])
 
-  startDateTime  DateTime // Tanggal + jam mulai
+  date           DateTime
+  sessionNumbers Int[] // ← array of session numbers (e.g. [5,6,7,8])
+
   notes          String?
-
   status         BookingStatus @default(PENDING)
   paymentMethod  String?
   paymentStatus  String?
   paidAt         DateTime?
   canceledAt     DateTime?
-
   createdAt      DateTime @default(now())
 }
+
+
 
 model Admin {
   id        Int      @id @default(autoincrement())

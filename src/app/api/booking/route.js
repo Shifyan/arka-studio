@@ -1,6 +1,9 @@
+import uniqueNumb from "../../../../lib/nanoid";
+
 export async function POST(request) {
-  const dataReq = await request.json();
-  console.log(dataReq);
+  const order = await request.json();
+  const numb = uniqueNumb();
+  console.log(numb);
   return Response.json([
     {
       status: "ok",
