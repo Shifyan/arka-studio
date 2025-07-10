@@ -26,7 +26,7 @@ model Booking {
   package        Package  @relation(fields: [packageId], references: [id])
 
   date           DateTime
-  sessionNumbers Int[] // ← array of session numbers (e.g. [5,6,7,8])
+  sessionNumbers Int[] 
 
   notes          String?
   status         BookingStatus @default(PENDING)

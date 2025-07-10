@@ -21,11 +21,11 @@ export async function POST(request) {
     return Response.json({ error: "invoice not found" }, { status: 404 });
   }
 
-  // Update status to CANCELED
+  // Update status to PAID
   const updateStatus = await prisma.booking.update({
     where: { invoiceNumber },
-    data: { status: BookingStatus.CANCELED },
+    data: { status: BookingStatus.PAID },
   });
 
-  return Response.json({ msg: "Order has been canceled" });
+  return Response.json({ msg: "payment successfully made" });
 }

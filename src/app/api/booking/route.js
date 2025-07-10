@@ -1,10 +1,10 @@
-import uniqueNumb from "../../../../lib/nanoid";
+import generateInvoice from "../../../../lib/generateInvocie";
 import prisma from "../../../../lib/prisma";
 import { BookingStatus } from "@/generated/prisma";
 
 export async function POST(request) {
   const body = await request.json();
-  let invoiceNumber = `INV-${uniqueNumb()}`;
+  let invoiceNumber = generateInvoice();
   let {
     name,
     email,
@@ -26,10 +26,13 @@ export async function POST(request) {
     !sessionNumbers?.length ||
     !paymentMethod
   ) {
-    return new Response(JSON.stringify({ message: "Data tidak lengkap" }), {
-      status: 400,
-    });
+    return Response.json({ msg: "Invalid Data" }, { status: 400 });
+
+    // new Response(JSON.stringify({ message: "Data tidak lengkap" }), {
+    //   status: 400,
+    // });
   }
+
   // create booking date
   const bookingDate = new Date(date);
   bookingDate.setHours(0, 0, 0, 0);
@@ -50,9 +53,11 @@ export async function POST(request) {
   });
 
   if (existing.length > 0) {
-    return new Response(JSON.stringify({ message: "Sesi sudah dibooking" }), {
-      status: 409,
-    });
+    return Response.json({ msg: "session already booked" }, { status: 409 });
+
+    // new Response(JSON.stringify({ message: "Sesi sudah dibooking" }), {
+    //   status: 409,
+    // });
   }
 
   // insert data to database
@@ -70,12 +75,8 @@ export async function POST(request) {
       status: "PENDING",
     },
   });
-  return Response.json([
-    {
-      status: "ok",
-      data: {
-        booking,
-      },
-    },
-  ]);
+  return Response.json({
+    msg: "order created successfully",
+    data: { booking },
+  });
 }
