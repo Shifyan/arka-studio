@@ -59,7 +59,7 @@ export default function Navbar() {
         <Link href="/">
           <Button
             variant="outline"
-            className="font-medium text-[20px] px-[30px] py-[22px] leading-[29px] cursor-pointer outline-1 text-red-700 border-red-700 hover:bg-red-600 hover:text-white transform ease-in duration-200"
+            className="font-medium text-[20px] px-[30px] py-[22px] leading-[29px] cursor-pointer outline-1 text-red-900 border-red-900 hover:bg-red-900 hover:text-white transform ease-in duration-200"
           >
             Book Now
           </Button>

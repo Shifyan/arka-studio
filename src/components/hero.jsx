@@ -1,8 +1,12 @@
+import Image from "next/image";
+import { Button } from "./ui/button";
+import Link from "next/link";
+
 export default function Hero() {
   return (
-    <div className="px-[130px]">
+    <div className="px-[130px] min-h-[790px] py-[60px] ">
       <div className="relative">
-        <div className="w-[668px] absolute z-10">
+        <div className="w-[668px] max-h-[670px] absolute z-10">
           <h1 className="font-bold text-[96px] leading-tight space-y-2">
             <span className="inline-block bg-white rounded-b-[20px]  px-3 ">
               Unleash The
@@ -21,17 +25,39 @@ export default function Hero() {
             lens, ensuring that every click captures the essence of your unique
             journey.
           </h2>
+          <div className="mt-[93px]">
+            <Link href="/">
+              <Button className=" cursor-pointer hover:bg-red-950 bg-red-900 text-white px-[48px] py-[28px] font-medium text-[20px] transform duration-200 ease-in">
+                Book Your Session Now &gt;
+              </Button>
+            </Link>
+          </div>
         </div>
         <div className="absolute w-[690px] flex flex-col  right-0">
-          <div className="bg-red-500 w-[680px] h-[400px] rounded-[20px]">
-            Div 1
+          <div className=" w-[680px] h-[400px] rounded-[20px] overflow-hidden">
+            <Image
+              src="/hero-img1.jpg"
+              width={680}
+              height={400}
+              alt="Gambar 1"
+            ></Image>
           </div>
           <div className="flex flex-row mt-[20px]">
-            <div className="bg-yellow-300 w-[279px] h-[250px] rounded-[20px]">
-              Div 2
+            <div className="overflow-hidden w-[279px] h-[250px] rounded-[20px]">
+              <Image
+                src="/hero-img2.jpg"
+                width={279}
+                height={250}
+                alt="Gambar 2"
+              ></Image>
             </div>
-            <div className="bg-blue-500 w-[380px] h-[250px] ms-[21px] rounded-[20px]">
-              Div 3
+            <div className="overflow-hidden w-[380px] h-[250px] ms-[21px] rounded-[20px]">
+              <Image
+                src="/hero-img3.jpg"
+                width={380}
+                height={250}
+                alt="Gambar 2"
+              ></Image>
             </div>
           </div>
         </div>
