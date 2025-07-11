@@ -9,7 +9,7 @@ const prociono = Prociono({
 
 export default function Navbar() {
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row items-center">
       <div className="left-header basis-1/5 ps-[114px]  pt-[13px]">
         <div className="w-fit ">
           <h1
@@ -56,12 +56,14 @@ export default function Navbar() {
         </Link>
       </div>
       <div className="right-header basis-1/5 pt-[11px]">
-        <Button
-          variant="outline"
-          className="font-medium text-[20px] px-[28px] py-[16px] leading-[29px]"
-        >
-          Hire Now
-        </Button>
+        <Link href="/">
+          <Button
+            variant="outline"
+            className="font-medium text-[20px] px-[30px] py-[22px] leading-[29px] cursor-pointer outline-1 text-red-700 border-red-700 hover:bg-red-600 hover:text-white transform ease-in duration-200"
+          >
+            Book Now
+          </Button>
+        </Link>
       </div>
     </div>
   );
