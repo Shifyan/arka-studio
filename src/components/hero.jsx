@@ -18,14 +18,14 @@ export default function Hero() {
               Photography
             </span>
           </h1>
-          <h2 className="font-normal text-[18px] bg-white pt-4 rounded-b-[20px] pb-[20px]">
-            At Arka Studio, we specialize in capturing life's most precious
-            moments, transforming them into timeless works of art. Our team of
-            passionate photographers is dedicated to telling stories through the
-            lens, ensuring that every click captures the essence of your unique
-            journey.
+          <h2 className="font-normal text-[18px] bg-white pt-4 rounded-b-[20px] max-w-[668px] pb-[20px]">
+            Di Arka Studio, kami fokus menangkap momen-momen paling berharga
+            dalam hidup Anda dan mengubahnya jadi karya visual yang penuh makna.
+            Dengan tim fotografer yang berpengalaman dan penuh semangat, kami
+            siap bercerita lewat lensa dan memastikan setiap jepretan
+            mencerminkan perjalanan unik Anda.
           </h2>
-          <div className="mt-[93px]">
+          <div className="mt-[66px]">
             <Link href="/">
               <Button className=" cursor-pointer hover:bg-red-950 bg-red-900 text-white px-[48px] py-[28px] font-medium text-[20px] transform duration-200 ease-in">
                 Book Your Session Now &gt;
