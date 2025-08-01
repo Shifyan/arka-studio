@@ -30,7 +30,7 @@ export default function Navbar() {
             Home
           </Button>
         </Link>
-        <Link href="/">
+        <Link href="/services">
           <Button
             variant="link"
             className="cursor-pointer text-[20px] font-semibold  "
