@@ -16,7 +16,7 @@ export default function Home() {
       <div className="mt-[60px]">
         <Counter />
       </div>
-      <div className="mt-[60px]">
+      <div className="mt-[60px] mb-[20px]">
         <Footer />
       </div>
     </div>

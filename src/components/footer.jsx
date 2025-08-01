@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 export default function Footer() {
   return (
-    <div className="flex flex-row items-center justify-between mx-[130px] mb-[40px]">
+    <div className="flex flex-row items-center justify-between mx-[130px] my-[25px]">
       <div>
         <h1 className="font-semibold text-[20px]">
           Arka Studio.{" "}
