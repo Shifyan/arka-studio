@@ -1,5 +1,5 @@
 import UnderDevelopmentPage from "@/components/underDevelopmentPage";
-export default function Services() {
+export default function Booking() {
   return (
     <div>
       <UnderDevelopmentPage />

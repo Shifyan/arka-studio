@@ -38,7 +38,7 @@ export default function Navbar() {
             Services
           </Button>
         </Link>
-        <Link href="/">
+        <Link href="/about">
           <Button
             variant="link"
             className="cursor-pointer text-[20px] font-semibold "
@@ -46,7 +46,7 @@ export default function Navbar() {
             About Us
           </Button>
         </Link>
-        <Link href="/">
+        <Link href="/portofolio">
           <Button
             variant="link"
             className="cursor-pointer text-[20px] font-semibold "
@@ -56,7 +56,7 @@ export default function Navbar() {
         </Link>
       </div>
       <div className="right-header basis-1/5 pt-[11px]">
-        <Link href="/">
+        <Link href="/booking">
           <Button
             variant="outline"
             className="font-medium text-[20px] px-[30px] py-[22px] leading-[29px] cursor-pointer outline-1 text-red-900 border-red-900 hover:bg-red-900 hover:text-white transform ease-in duration-200"

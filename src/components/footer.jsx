@@ -23,7 +23,7 @@ export default function Footer() {
             Home
           </Button>
         </Link>
-        <Link href="/">
+        <Link href="/services">
           <Button
             variant="link"
             className="cursor-pointer text-[20px] font-semibold  p-0"
@@ -31,7 +31,7 @@ export default function Footer() {
             Services
           </Button>
         </Link>
-        <Link href="/">
+        <Link href="/about">
           <Button
             variant="link"
             className="cursor-pointer text-[20px] font-semibold p-0"
@@ -39,7 +39,7 @@ export default function Footer() {
             About Us
           </Button>
         </Link>
-        <Link href="/">
+        <Link href="/portofolio">
           <Button
             variant="link"
             className="cursor-pointer text-[20px] font-semibold p-0"
