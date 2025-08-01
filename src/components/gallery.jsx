@@ -12,26 +12,26 @@ export default function Gallery() {
       <div className="mt-[43px]">
         <div className="flex gap-[20px]">
           <div
-            className="basis-2/3 bg-amber-300 rounded-[50px] h-[250px] bg-cover bg-center"
+            className="basis-2/3  rounded-[50px] h-[250px] bg-cover bg-center"
             style={{ backgroundImage: "url('/gallery-1.jpg')" }}
           ></div>
           <div
-            className="basis-1/3 bg-amber-600 rounded-[50px] h-[250px] bg-cover bg-center "
+            className="basis-1/3  rounded-[50px] h-[250px] bg-cover bg-center "
             style={{ backgroundImage: "url('/gallery-2.jpg')" }}
           ></div>
         </div>
         <div className="flex gap-[20px] mt-[20px]">
           <div
-            className="bg-blue-400 basis-1/3 rounded-[50px] bg-cover bg-center"
+            className="basis-1/3 rounded-[50px] bg-cover bg-center"
             style={{ backgroundImage: "url('/gallery-3.jpg')" }}
           ></div>
           <div className="basis-2/3 flex flex-col gap-[20px]">
             <div
-              className="bg-blue-700 rounded-[50px] h-[250px] bg-cover bg-center"
+              className=" rounded-[50px] h-[250px] bg-cover bg-center"
               style={{ backgroundImage: "url('/gallery-4.jpg')" }}
             ></div>
             <div
-              className="bg-blue-950 rounded-[50px] h-[250px] bg-cover bg-center"
+              className=" rounded-[50px] h-[250px] bg-cover bg-center"
               style={{ backgroundImage: "url('/gallery-5.jpg')" }}
             ></div>
           </div>

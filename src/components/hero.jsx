@@ -26,7 +26,7 @@ export default function Hero() {
             mencerminkan perjalanan unik Anda.
           </h2>
           <div className="mt-[66px]">
-            <Link href="/">
+            <Link href="/booking">
               <Button className=" cursor-pointer hover:bg-red-950 bg-red-900 text-white px-[48px] py-[28px] font-medium text-[20px] transform duration-200 ease-in">
                 Book Your Session Now &gt;
               </Button>
