@@ -8,7 +8,7 @@ export default function Hero() {
       <div className="relative">
         <div className="w-[668px] max-h-[670px] absolute z-10">
           <h1 className="font-bold text-[96px] leading-tight space-y-2">
-            <span className="inline-block bg-white rounded-b-[20px]  px-3 ">
+            <span className="inline-block bg-white rounded-b-[20px]  pe-3 ">
               Unleash The
             </span>
             <br />

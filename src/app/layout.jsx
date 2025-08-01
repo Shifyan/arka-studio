@@ -12,8 +12,8 @@ const poppins = Poppins({
 
 export const metadata = {
   title: "Arka Studio",
-  description: "Studio Booking App",
-  icons: { icon: "/Camera.png" },
+  description: "Photo Studio Booking App",
+  icons: { icon: "/Website.png" },
 };
 
 export default function RootLayout({ children }) {
