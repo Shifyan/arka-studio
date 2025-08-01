@@ -6,18 +6,17 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function OnlyDesktop({ children }) {
-  const [isDesktop, setIsDesktop] = useState(null);
+  const [ready, setReady] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
-    // Bukan mobile dan bukan tablet berarti PC/Laptop
-    const isNotMobileOrTablet = !isMobile && !isTablet;
-    setIsDesktop(isNotMobileOrTablet);
+    // Jalankan hanya di client
+    const isClientDesktop = !isMobile && !isTablet;
+    setIsDesktop(isClientDesktop);
+    setReady(true);
   }, []);
 
-  if (isDesktop === null) {
-    // Masih deteksi
-    return null;
-  }
+  if (!ready) return null;
 
   if (!isDesktop) {
     return (
@@ -29,8 +28,9 @@ export default function OnlyDesktop({ children }) {
           height={60}
           className="mb-[10px]"
         />
-        <p className="mb-[20px]">
-          For a better experience, please open this website on a PC or Laptop.
+        <p className="mb-[20px] font-medium">
+          This project is currently under development. For the better
+          experience, please access it from a PC or laptop
         </p>
         <Link href="https://www.instagram.com/a.shif_yan/">--Shifyannn</Link>
       </div>
