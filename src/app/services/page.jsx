@@ -41,10 +41,7 @@ export default function Services() {
         console.error("Fetch error:", err);
       });
   }, []);
-  console.log(packages);
-  packages.map((paket) => {
-    console.log(paket.image);
-  });
+
   return (
     <div>
       <div className="mt-[20px]">
