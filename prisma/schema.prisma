@@ -35,6 +35,7 @@ model Booking {
   paidAt         DateTime?
   canceledAt     DateTime?
   createdAt      DateTime @default(now())
+  
 }
 
 
@@ -56,6 +57,7 @@ model Package {
 
   bookings    Booking[]
   createdAt   DateTime @default(now())
+  order       Int      
 }
 
 enum BookingStatus {
