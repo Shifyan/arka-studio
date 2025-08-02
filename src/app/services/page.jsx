@@ -59,7 +59,7 @@ export default function Services() {
           </p>
         </div>
       </div>
-      <div className="flex flex-wrap justify-center gap-[20px] mt-[90px]">
+      <div className="flex flex-wrap justify-center gap-[20px] mt-[90px] min-h-[300px]">
         {packages.map((paket, index) => {
           return (
             <Card
