@@ -1,4 +1,3 @@
-import UnderDevelopmentPage from "@/components/underDevelopmentPage";
 import Navbar from "@/components/header";
 import Footer from "@/components/footer";
 import Link from "next/link";

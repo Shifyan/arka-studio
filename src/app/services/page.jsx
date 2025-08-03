@@ -1,5 +1,4 @@
 "use client";
-import UnderDevelopmentPage from "@/components/underDevelopmentPage";
 import Navbar from "@/components/header";
 import Footer from "@/components/footer";
 import { useEffect, useState } from "react";
