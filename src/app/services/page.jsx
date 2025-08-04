@@ -1,11 +1,11 @@
 "use client";
-import UnderDevelopmentPage from "@/components/underDevelopmentPage";
 import Navbar from "@/components/header";
 import Footer from "@/components/footer";
 import { useEffect, useState } from "react";
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import useStore from "@/lib/store";
 
 import {
   Card,
@@ -25,22 +25,27 @@ export default function Services() {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   });
-  let [packages, setPackages] = useState([]);
+  // let [packages, setPackages] = useState([]);
+  const { packages, fetchPackages } = useStore();
+
   useEffect(() => {
-    fetch("/api/packages")
-      .then((res) => res.json())
-      .then((data) => {
-        let result = data.data;
-        const formattedData = result.map((item) => ({
-          ...item,
-          price: formatter.format(item.price),
-        }));
-        setPackages(formattedData);
-      })
-      .catch((err) => {
-        console.error("Fetch error:", err);
-      });
+    fetchPackages();
   }, []);
+  // useEffect(() => {
+  //   fetch("/api/packages")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       let result = data.data;
+  //       const formattedData = result.map((item) => ({
+  //         ...item,
+  //         price: formatter.format(item.price),
+  //       }));
+  //       setPackages(formattedData);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Fetch error:", err);
+  //     });
+  // }, []);
 
   return (
     <div>
