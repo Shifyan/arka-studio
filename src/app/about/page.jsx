@@ -61,7 +61,7 @@ export default function About() {
               </p>
             </div>
           </div>
-          <div className="flex gap-[23px]">
+          <div className="flex justify-end gap-[23px]">
             <div className="mt-[40px]">
               <div className="w-[250px] h-[150px] overflow-hidden ">
                 <Image
@@ -101,7 +101,7 @@ export default function About() {
           </div>
         </div>
       </div>
-      <div className="mt-[60px]">
+      <div className="mt-[60px] ">
         <Footer></Footer>
       </div>
     </div>

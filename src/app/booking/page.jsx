@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -7,11 +7,28 @@ import Link from "next/link";
 import { CircleArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import useStore from "@/lib/store";
 
 export default function Booking() {
   const [nama, setNama] = useState("");
   const [email, setEmail] = useState("");
   const [noHp, setNoHp] = useState("");
+  const { packages, fetchPackages } = useStore();
+  const [selectedPackages, setSelectedPackages] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState(["Bayar Tunai"]);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+
+  useEffect(() => {
+    fetchPackages();
+  }, []);
+
   return (
     <div className="flex justify-between items-start my-[20px] mx-[20px]">
       <div className="relative">
@@ -32,16 +49,16 @@ export default function Booking() {
         ></Image>
       </div>
       <div className="grow">
-        <div className="flex justify-center mt-[20px]">
-          <h1 className="font-bold text-[40px]">Book a Session</h1>
+        <div className="flex justify-center mt-[10px]">
+          <h1 className=" font-bold text-[35px]">Book a Session</h1>
         </div>
-        <div className="mt-[40px] mx-[80px]">
+        <div className="mt-[15px] mx-[80px]">
           <Tabs defaultValue="Data Diri">
             <TabsList className="flex justify-between mx-[120px]">
               <TabsTrigger value="Data Diri">Data Diri</TabsTrigger>
               <TabsTrigger value="Waktu">Waktu</TabsTrigger>
             </TabsList>
-            <div className="mt-[30px] mx-[10px]">
+            <div className="mt-[10px] mx-[10px]">
               <TabsContent value="Data Diri">
                 <div>
                   <div>
@@ -78,15 +95,48 @@ export default function Booking() {
                     />
                   </div>
                   <div className="mt-[20px]">
-                    <Label hmtlFor="packages" className="text-[18px]">
+                    <Label hmtlFor="packages" className="text-[18px] mb-[10px]">
                       Pilihan Paket
                     </Label>
-                    <Input
-                      id="packages"
-                      defaultValue={noHp}
-                      className="mt-[10px]"
-                      onChange={(e) => setNoHp(e.target.value)}
-                    />
+                    <Select
+                      defaultValue={selectedPackages}
+                      onValueChange={setSelectedPackages}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Packages"></SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {packages.map((e, i) => {
+                          return (
+                            <SelectItem value={e.name} key={i}>
+                              {`${e.name}, ${e.price}`}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="mt-[20px]">
+                    <Label hmtlFor="packages" className="text-[18px] mb-[10px]">
+                      Pilihan Pembayaran
+                    </Label>
+                    <Select
+                      defaultValue={selectedPaymentMethod}
+                      onValueChange={setSelectedPaymentMethod}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Packages"></SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {paymentMethod.map((e, i) => {
+                          return (
+                            <SelectItem value={e} key={i}>
+                              {e}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </TabsContent>
