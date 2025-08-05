@@ -29,6 +29,7 @@ export default function Booking() {
     fetchPackages();
   }, []);
 
+
   return (
     <div className="flex justify-between items-start my-[20px] mx-[20px]">
       <div className="relative">
@@ -54,11 +55,11 @@ export default function Booking() {
         </div>
         <div className="mt-[15px] mx-[80px]">
           <Tabs defaultValue="Data Diri">
-            <TabsList className="flex justify-between mx-[120px]">
+            <TabsList className="flex justify-between mx-[140px]">
               <TabsTrigger value="Data Diri">Data Diri</TabsTrigger>
               <TabsTrigger value="Waktu">Waktu</TabsTrigger>
             </TabsList>
-            <div className="mt-[10px] mx-[10px]">
+            <div className="mt-[10px] mx-[50px]">
               <TabsContent value="Data Diri">
                 <div>
                   <div>
@@ -84,7 +85,7 @@ export default function Booking() {
                     />
                   </div>
                   <div className="mt-[20px]">
-                    <Label hmtlFor="handphone" className="text-[18px]">
+                    <Label hmtlFor="handphone" className="text-[18px] s">
                       No HP
                     </Label>
                     <Input
@@ -109,7 +110,7 @@ export default function Booking() {
                         {packages.map((e, i) => {
                           return (
                             <SelectItem value={e.name} key={i}>
-                              {`${e.name}, ${e.price}`}
+                              {`Paket ${e.name}, Harga ${e.price}, Durasi ${e.duration} Menit`}
                             </SelectItem>
                           );
                         })}
