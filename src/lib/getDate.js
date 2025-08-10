@@ -1,17 +1,35 @@
-import { addMonths, format } from "date-fns";
+import { addMonths, format, getDaysInMonth } from "date-fns";
+import { id } from "date-fns/locale";
 
-const threeMonth = () => {
-  const threeMonth = [];
-  for (let a = 1; a <= 3; a++) {
+export function getNextThreeMonths() {
+  const result = [];
+
+  for (let i = 1; i <= 3; i++) {
     const today = new Date();
-    const month = addMonths(today, a);
-    const formattedMonth = format(month, "MM-yyyy");
-    const monthData = {
-      month: formattedMonth,
-    };
-    threeMonth.push(monthData);
-  }
-  return threeMonth;
-};
+    const futureMonth = addMonths(today, i);
 
-console.log(threeMonth());
+    result.push({
+      month: format(futureMonth, "MM"), // 01, 02, ...
+      monthName: format(futureMonth, "MMMM", { locale: id }), // Januari, Februari
+      year: format(futureMonth, "yyyy"), // 2025
+      daysInMonth: getDaysInMonth(futureMonth), // jumlah hari
+      firstDay: format(
+        new Date(futureMonth.getFullYear(), futureMonth.getMonth(), 1),
+        "EEEE",
+        { locale: id }
+      ), // hari pertama
+      lastDay: format(
+        new Date(
+          futureMonth.getFullYear(),
+          futureMonth.getMonth(),
+          getDaysInMonth(futureMonth)
+        ),
+        "EEEE",
+        { locale: id }
+      ), // hari terakhir
+    });
+  }
+
+  return result;
+}
+console.log(getNextThreeMonths());
