@@ -205,17 +205,17 @@ export default function Booking() {
                 <div>
                   {/* Alert jika belum memilih paket */}
                   {!availableSessionsCount && (
-                    <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <div className=" px-4 py-2 bg-red-50 border border-red-200 rounded-lg">
                       <p className="text-red-700 font-medium">
                         ⚠️ Silakan pilih paket terlebih dahulu di tab "Data
-                        Diri" untuk menentukan jumlah sesi yang dapat dipilih.
+                        Diri"
                       </p>
                     </div>
                   )}
 
                   {/* Informasi jumlah sesi yang harus dipilih */}
                   {availableSessionsCount && (
-                    <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className=" py-2 px-3 bg-blue-50 border border-blue-200 rounded-lg">
                       <p className="text-blue-700 font-medium">
                         📋 Anda perlu memilih {availableSessionsCount} sesi
                         berurutan ({selectedSession.length}/
@@ -224,7 +224,7 @@ export default function Booking() {
                     </div>
                   )}
 
-                  <div className="grid grid-cols-4 gap-3 mt-[15px]">
+                  <div className="grid grid-cols-4 gap-2 mt-[15px]">
                     {session.map((sesi) => {
                       const isSelected = selectedSession.includes(sesi.id);
                       const isDisabled = !availableSessionsCount;
@@ -298,7 +298,7 @@ export default function Booking() {
                           onClick={handleSessionClick}
                           disabled={isDisabled || (!canSelect && !isSelected)}
                           className={`
-                            p-4 border-2 rounded-lg text-center transition-all duration-200
+                            py-2 px-4 border-2 rounded-lg text-center transition-all duration-200
                             ${
                               isDisabled
                                 ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
@@ -319,35 +319,41 @@ export default function Booking() {
                     })}
                   </div>
 
-                  {/* Konfirmasi sesi terpilih */}
-                  {selectedSession.length > 0 && (
-                    <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                      <p className="text-green-700 font-medium mb-2">
-                        ✅ Sesi terpilih ({selectedSession.length}/
-                        {availableSessionsCount}):
+                  {/* Konfirmasi sesi - selalu tampil untuk menjaga height */}
+                  <div className="mt-2 py-2 px-3 bg-green-50 border border-green-200 rounded-lg">
+                    {selectedSession.length > 0 ? (
+                      <>
+                        <p className="text-green-700 font-medium mb-2">
+                          ✅ Sesi terpilih ({selectedSession.length}/{availableSessionsCount}):
+                        </p>
+                        <div className="text-green-800 font-medium">
+                          {(() => {
+                            const sortedSessions = selectedSession.sort((a, b) => a - b);
+                            const firstSession = session.find(s => s.id === sortedSessions[0]);
+                            const lastSession = session.find(s => s.id === sortedSessions[sortedSessions.length - 1]);
+                            
+                            if (sortedSessions.length === 1) {
+                              return `Sesi ${sortedSessions[0]}: ${firstSession?.time}`;
+                            } else {
+                              const startTime = firstSession?.time.split(' - ')[0];
+                              const endTime = lastSession?.time.split(' - ')[1];
+                              return `Sesi ${sortedSessions[0]}-${sortedSessions[sortedSessions.length - 1]}: ${startTime} - ${endTime}`;
+                            }
+                          })()} 
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-gray-500 font-medium">
+                        {availableSessionsCount ? 
+                          `Pilih ${availableSessionsCount} sesi berurutan` : 
+                          'Belum ada sesi yang dipilih'
+                        }
                       </p>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedSession
-                          .sort((a, b) => a - b)
-                          .map((sessionId) => {
-                            const sessionData = session.find(
-                              (s) => s.id === sessionId
-                            );
-                            return (
-                              <span
-                                key={sessionId}
-                                className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm"
-                              >
-                                Sesi {sessionId} ({sessionData?.time})
-                              </span>
-                            );
-                          })}
-                      </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
 
                   {/* Tombol Kirim */}
-                  <div className="mt-6 flex justify-center">
+                  <div className="mt-4 flex justify-center">
                     <Button
                       className="px-8 py-3 text-lg font-semibold"
                       size="lg"
