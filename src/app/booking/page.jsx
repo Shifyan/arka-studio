@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import useStore from "@/lib/store";
+import { Calendar } from "@/components/ui/calendar";
 
 export default function Booking() {
   const [nama, setNama] = useState("");
@@ -22,17 +23,66 @@ export default function Booking() {
   const [noHp, setNoHp] = useState("");
   const { packages, fetchPackages } = useStore();
   const [selectedPackages, setSelectedPackages] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState(["Bayar Tunai"]);
+  const [paymentMethod, setPaymentMethod] = useState([
+    "Bayar Tunai",
+    "Transfer",
+  ]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+  const [date, setDate] = useState(new Date());
+  const [availableSessionsCount, setAvailableSessionsCount] = useState("");
+  const [session, setSession] = useState([
+    { id: 1, time: "09:00 - 09:30" },
+    { id: 2, time: "09:30 - 10:00" },
+    { id: 3, time: "10:00 - 10:30" },
+    { id: 4, time: "10:30 - 11:00" },
+    { id: 5, time: "11:00 - 11:30" },
+    { id: 6, time: "11:30 - 12:00" },
+    { id: 7, time: "12:00 - 12:30" },
+    { id: 8, time: "12:30 - 13:00" },
+    { id: 9, time: "13:00 - 13:30" },
+    { id: 10, time: "13:30 - 14:00" },
+    { id: 11, time: "14:00 - 14:30" },
+    { id: 12, time: "14:30 - 15:00" },
+    { id: 13, time: "15:00 - 15:30" },
+    { id: 14, time: "15:30 - 16:00" },
+    { id: 15, time: "16:00 - 16:30" },
+    { id: 16, time: "16:30 - 17:00" },
+  ]);
+  const [selectedSession, setSelectedSession] = useState([]);
 
   useEffect(() => {
     fetchPackages();
   }, []);
 
+  useEffect(() => {
+    if (selectedPackages) {
+      const found = packages.find((pkg) => pkg.name === selectedPackages);
+      if (found) {
+        let sessionDuration = found.duration / 30;
+        setAvailableSessionsCount(sessionDuration);
+      }
+    }
+  }, [selectedPackages]);
+
+  useEffect(() => {
+    console.log(availableSessionsCount);
+  }, [availableSessionsCount]);
+
+  useEffect(() => {
+    console.log("Selected Session:", selectedSession);
+  }, [selectedSession]);
+
+  // Reset selected sessions when package changes
+  useEffect(() => {
+    if (availableSessionsCount) {
+      setSelectedSession([]);
+    }
+  }, [availableSessionsCount]);
+
   return (
-    <div className="flex justify-between items-start my-[20px] mx-[20px]">
-      <div className="relative">
-        <Link href="/" className="absolute top-5 left-5 z-10">
+    <div className=" flex justify-between items-start my-[20px] mx-[20px]">
+      <div className="relative ">
+        <Link href="/" className="absolute top-5 left-5 z-10 ">
           <Button
             variant="secondary"
             className="size-12 rounded-full  cursor-pointer"
@@ -54,11 +104,12 @@ export default function Booking() {
         </div>
         <div className="mt-[15px] mx-[80px]">
           <Tabs defaultValue="Data Diri">
-            <TabsList className="flex justify-between mx-[120px]">
+            <TabsList className="flex justify-between mx-[140px]">
               <TabsTrigger value="Data Diri">Data Diri</TabsTrigger>
-              <TabsTrigger value="Waktu">Waktu</TabsTrigger>
+              <TabsTrigger value="Waktu">Tanggal</TabsTrigger>
+              <TabsTrigger value="Sesi">Sesi</TabsTrigger>
             </TabsList>
-            <div className="mt-[10px] mx-[10px]">
+            <div className="mt-[10px] mx-[50px] ">
               <TabsContent value="Data Diri">
                 <div>
                   <div>
@@ -84,7 +135,7 @@ export default function Booking() {
                     />
                   </div>
                   <div className="mt-[20px]">
-                    <Label hmtlFor="handphone" className="text-[18px]">
+                    <Label hmtlFor="handphone" className="text-[18px] s">
                       No HP
                     </Label>
                     <Input
@@ -109,7 +160,7 @@ export default function Booking() {
                         {packages.map((e, i) => {
                           return (
                             <SelectItem value={e.name} key={i}>
-                              {`${e.name}, ${e.price}`}
+                              {`Paket ${e.name}, Harga ${e.price}, Durasi ${e.duration} Menit`}
                             </SelectItem>
                           );
                         })}
@@ -137,6 +188,181 @@ export default function Booking() {
                         })}
                       </SelectContent>
                     </Select>
+                  </div>
+                </div>
+              </TabsContent>
+              <TabsContent value="Waktu">
+                <div className="flex justify-center">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    className="w-[380px]"
+                  ></Calendar>
+                </div>
+              </TabsContent>
+              <TabsContent value="Sesi">
+                <div>
+                  {/* Alert jika belum memilih paket */}
+                  {!availableSessionsCount && (
+                    <div className=" px-4 py-2 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-red-700 font-medium">
+                        ⚠️ Silakan pilih paket terlebih dahulu di tab "Data
+                        Diri"
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Informasi jumlah sesi yang harus dipilih */}
+                  {availableSessionsCount && (
+                    <div className=" py-2 px-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-blue-700 font-medium">
+                        📋 Anda perlu memilih {availableSessionsCount} sesi
+                        berurutan ({selectedSession.length}/
+                        {availableSessionsCount} terpilih)
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-4 gap-2 mt-[15px]">
+                    {session.map((sesi) => {
+                      const isSelected = selectedSession.includes(sesi.id);
+                      const isDisabled = !availableSessionsCount;
+
+                      // Function to check if session can be selected based on consecutive rule
+                      const canSelectConsecutive = () => {
+                        if (selectedSession.length === 0) {
+                          // First selection - any session can be selected
+                          return true;
+                        }
+
+                        if (isSelected) {
+                          // Already selected - can always deselect
+                          return true;
+                        }
+
+                        if (selectedSession.length >= availableSessionsCount) {
+                          // Already reached max selection
+                          return false;
+                        }
+
+                        // Check if this session is adjacent to the current consecutive block
+                        const sortedSelected = [...selectedSession].sort(
+                          (a, b) => a - b
+                        );
+
+                        // Verify current selection is consecutive
+                        let isCurrentConsecutive = true;
+                        for (let i = 1; i < sortedSelected.length; i++) {
+                          if (sortedSelected[i] !== sortedSelected[i - 1] + 1) {
+                            isCurrentConsecutive = false;
+                            break;
+                          }
+                        }
+
+                        if (!isCurrentConsecutive) {
+                          // Current selection is not consecutive, should not happen but handle it
+                          return false;
+                        }
+
+                        const minSelected = sortedSelected[0];
+                        const maxSelected =
+                          sortedSelected[sortedSelected.length - 1];
+
+                        // Session must be adjacent (one position before min or after max)
+                        return (
+                          sesi.id === minSelected - 1 ||
+                          sesi.id === maxSelected + 1
+                        );
+                      };
+
+                      const canSelect = canSelectConsecutive();
+
+                      const handleSessionClick = () => {
+                        if (isDisabled || (!canSelect && !isSelected)) return;
+
+                        if (isSelected) {
+                          // Remove from selection
+                          setSelectedSession(
+                            selectedSession.filter((id) => id !== sesi.id)
+                          );
+                        } else {
+                          // Add to selection (already checked canSelect above)
+                          setSelectedSession([...selectedSession, sesi.id]);
+                        }
+                      };
+
+                      return (
+                        <button
+                          key={sesi.id}
+                          onClick={handleSessionClick}
+                          disabled={isDisabled || (!canSelect && !isSelected)}
+                          className={`
+                            py-2 px-4 border-2 rounded-lg text-center transition-all duration-200
+                            ${
+                              isDisabled
+                                ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+                                : !canSelect && !isSelected
+                                ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+                                : isSelected
+                                ? "border-blue-500 bg-blue-50 text-blue-700 hover:scale-105"
+                                : "border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:scale-105 cursor-pointer"
+                            }
+                          `}
+                        >
+                          <div className="font-semibold text-sm mb-1">
+                            Sesi {sesi.id}
+                          </div>
+                          <div className="text-xs">{sesi.time}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Konfirmasi sesi - selalu tampil untuk menjaga height */}
+                  <div className="mt-2 py-2 px-3 bg-green-50 border border-green-200 rounded-lg">
+                    {selectedSession.length > 0 ? (
+                      <>
+                        <p className="text-green-700 font-medium mb-2">
+                          ✅ Sesi terpilih ({selectedSession.length}/{availableSessionsCount}):
+                        </p>
+                        <div className="text-green-800 font-medium">
+                          {(() => {
+                            const sortedSessions = selectedSession.sort((a, b) => a - b);
+                            const firstSession = session.find(s => s.id === sortedSessions[0]);
+                            const lastSession = session.find(s => s.id === sortedSessions[sortedSessions.length - 1]);
+                            
+                            if (sortedSessions.length === 1) {
+                              return `Sesi ${sortedSessions[0]}: ${firstSession?.time}`;
+                            } else {
+                              const startTime = firstSession?.time.split(' - ')[0];
+                              const endTime = lastSession?.time.split(' - ')[1];
+                              return `Sesi ${sortedSessions[0]}-${sortedSessions[sortedSessions.length - 1]}: ${startTime} - ${endTime}`;
+                            }
+                          })()} 
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-gray-500 font-medium">
+                        {availableSessionsCount ? 
+                          `Pilih ${availableSessionsCount} sesi berurutan` : 
+                          'Belum ada sesi yang dipilih'
+                        }
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Tombol Kirim */}
+                  <div className="mt-4 flex justify-center">
+                    <Button
+                      className="px-8 py-3 text-lg font-semibold"
+                      size="lg"
+                      disabled={
+                        selectedSession.length !== availableSessionsCount
+                      }
+                    >
+                      Kirim Booking
+                    </Button>
                   </div>
                 </div>
               </TabsContent>
