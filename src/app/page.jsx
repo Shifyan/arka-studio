@@ -6,7 +6,7 @@ import Footer from "@/components/footer";
 import Gallery from "@/components/gallery";
 export default function Home() {
   return (
-    <div className="pt-[20px]">
+    <div className="pt-[20px] ">
       <Navbar />
       <div className="">
         <Hero />
