@@ -113,7 +113,7 @@ export default function Booking() {
               <TabsContent value="Data Diri">
                 <div>
                   <div>
-                    <Label hmtlFor="nama" className="text-[18px]">
+                    <Label htmlFor="nama" className="text-[18px]">
                       Nama Lengkap
                     </Label>
                     <Input
@@ -124,7 +124,7 @@ export default function Booking() {
                     />
                   </div>
                   <div className="mt-[20px]">
-                    <Label hmtlFor="email" className="text-[18px]">
+                    <Label htmlFor="email" className="text-[18px]">
                       Email
                     </Label>
                     <Input
@@ -135,7 +135,7 @@ export default function Booking() {
                     />
                   </div>
                   <div className="mt-[20px]">
-                    <Label hmtlFor="handphone" className="text-[18px] s">
+                    <Label htmlFor="handphone" className="text-[18px] s">
                       No HP
                     </Label>
                     <Input
@@ -146,7 +146,7 @@ export default function Booking() {
                     />
                   </div>
                   <div className="mt-[20px]">
-                    <Label hmtlFor="packages" className="text-[18px] mb-[10px]">
+                    <Label htmlFor="packages" className="text-[18px] mb-[10px]">
                       Pilihan Paket
                     </Label>
                     <Select
@@ -168,7 +168,7 @@ export default function Booking() {
                     </Select>
                   </div>
                   <div className="mt-[20px]">
-                    <Label hmtlFor="packages" className="text-[18px] mb-[10px]">
+                    <Label htmlFor="packages" className="text-[18px] mb-[10px]">
                       Pilihan Pembayaran
                     </Label>
                     <Select
@@ -176,7 +176,7 @@ export default function Booking() {
                       onValueChange={setSelectedPaymentMethod}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Packages"></SelectValue>
+                        <SelectValue placeholder="Select Payment Method"></SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {paymentMethod.map((e, i) => {
@@ -323,31 +323,42 @@ export default function Booking() {
                   <div className="mt-2 py-2 px-3 bg-green-50 border border-green-200 rounded-lg">
                     {selectedSession.length > 0 ? (
                       <>
-                        <p className="text-green-700 font-medium mb-2">
-                          ✅ Sesi terpilih ({selectedSession.length}/{availableSessionsCount}):
+                        <p className="text-green-700 font-medium mb-2 ">
+                          ✅ Sesi terpilih ({selectedSession.length}/
+                          {availableSessionsCount}):
                         </p>
                         <div className="text-green-800 font-medium">
                           {(() => {
-                            const sortedSessions = selectedSession.sort((a, b) => a - b);
-                            const firstSession = session.find(s => s.id === sortedSessions[0]);
-                            const lastSession = session.find(s => s.id === sortedSessions[sortedSessions.length - 1]);
-                            
+                            const sortedSessions = selectedSession.sort(
+                              (a, b) => a - b
+                            );
+                            const firstSession = session.find(
+                              (s) => s.id === sortedSessions[0]
+                            );
+                            const lastSession = session.find(
+                              (s) =>
+                                s.id ===
+                                sortedSessions[sortedSessions.length - 1]
+                            );
+
                             if (sortedSessions.length === 1) {
                               return `Sesi ${sortedSessions[0]}: ${firstSession?.time}`;
                             } else {
-                              const startTime = firstSession?.time.split(' - ')[0];
-                              const endTime = lastSession?.time.split(' - ')[1];
-                              return `Sesi ${sortedSessions[0]}-${sortedSessions[sortedSessions.length - 1]}: ${startTime} - ${endTime}`;
+                              const startTime =
+                                firstSession?.time.split(" - ")[0];
+                              const endTime = lastSession?.time.split(" - ")[1];
+                              return `Sesi ${sortedSessions[0]}-${
+                                sortedSessions[sortedSessions.length - 1]
+                              }: ${startTime} - ${endTime}`;
                             }
-                          })()} 
+                          })()}
                         </div>
                       </>
                     ) : (
                       <p className="text-gray-500 font-medium">
-                        {availableSessionsCount ? 
-                          `Pilih ${availableSessionsCount} sesi berurutan` : 
-                          'Belum ada sesi yang dipilih'
-                        }
+                        {availableSessionsCount
+                          ? `Pilih ${availableSessionsCount} sesi berurutan`
+                          : "Belum ada sesi yang dipilih"}
                       </p>
                     )}
                   </div>
