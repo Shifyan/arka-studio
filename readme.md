@@ -18,6 +18,7 @@ Arka Studio is a sophisticated photo studio booking system that provides an intu
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **Framework**: Next.js 15.3.5 (App Router)
 - **Language**: JavaScript
 - **Styling**: Tailwind CSS v4
@@ -27,12 +28,14 @@ Arka Studio is a sophisticated photo studio booking system that provides an intu
 - **Date Handling**: date-fns, react-day-picker
 
 ### Backend
+
 - **Runtime**: Node.js
 - **Database**: PostgreSQL
 - **ORM**: Prisma 6.11.1
 - **API**: Next.js API Routes
 
 ### Development Tools
+
 - **Linting**: ESLint
 - **Package Manager**: NPM
 - **Development**: Turbopack (Next.js dev server)
@@ -126,34 +129,40 @@ enum BookingStatus {
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - PostgreSQL database
 - NPM or Yarn package manager
 
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd arka-studio
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Environment setup**
+
    ```bash
    cp .env.example .env
    ```
+
    Configure your environment variables:
+
    ```env
    DATABASE_URL="postgresql://username:password@localhost:5432/arka_studio"
    NEXTAUTH_SECRET="your-secret-key"
    ```
 
 4. **Database setup**
+
    ```bash
    npx prisma generate
    npx prisma db push
@@ -179,6 +188,7 @@ npm start
 ### Booking Endpoints
 
 #### Create Booking
+
 ```http
 POST /api/booking
 Content-Type: application/json
@@ -196,9 +206,10 @@ Content-Type: application/json
 ```
 
 #### Update Booking Status
+
 ```http
 PUT /api/booking/paid
-PUT /api/booking/completed  
+PUT /api/booking/completed
 PUT /api/booking/cancel
 Content-Type: application/json
 
@@ -210,11 +221,13 @@ Content-Type: application/json
 ### Package Endpoints
 
 #### Get All Packages
+
 ```http
 GET /api/packages
 ```
 
 Response:
+
 ```json
 {
   "data": [
@@ -233,6 +246,7 @@ Response:
 ### Invoice Endpoints
 
 #### Generate Invoice
+
 ```http
 GET /api/getInvoice?bookingId=clx1234567890
 ```
@@ -242,23 +256,26 @@ GET /api/getInvoice?bookingId=clx1234567890
 ### 1. Booking System (`src/app/booking/page.jsx`)
 
 **Highlights:**
+
 - **Multi-step Form**: Progressive data collection with tabs
 - **Smart Session Selection**: Consecutive time slot validation
 - **Real-time Validation**: Immediate feedback on user actions
 - **State Persistence**: Maintains form state across tabs
 
 **Key Algorithm - Consecutive Session Selection:**
+
 ```javascript
 const canSelectConsecutive = () => {
   // Ensures users can only select adjacent time slots
   // Maintains booking integrity and prevents scheduling conflicts
   // Provides excellent UX with clear visual feedback
-}
+};
 ```
 
 ### 2. State Management (`src/lib/store.js`)
 
 **Features:**
+
 - **Zustand Integration**: Lightweight state management
 - **Currency Formatting**: Automatic IDR formatting
 - **API Integration**: Seamless data fetching
@@ -267,6 +284,7 @@ const canSelectConsecutive = () => {
 ### 3. Device Management (`src/components/deviceBlocker.jsx`)
 
 **Strategy:**
+
 - **Desktop-First Approach**: Blocks mobile devices during development
 - **Graceful Degradation**: Informative message for mobile users
 - **Performance Optimization**: Client-side detection
@@ -274,16 +292,19 @@ const canSelectConsecutive = () => {
 ## 🔧 Configuration Files
 
 ### Prisma Configuration
+
 - **Generator**: Custom output directory (`src/generated/prisma`)
 - **Provider**: PostgreSQL with connection pooling
 - **Development**: Auto-generation enabled
 
 ### Next.js Configuration
+
 - **Turbopack**: Enabled for faster development builds
 - **ESLint**: Next.js recommended configuration
 - **Font Optimization**: Poppins font with variable support
 
 ### Tailwind Configuration
+
 - **Version**: v4 (latest)
 - **ShadCN Integration**: Component-based design system
 - **Custom Animations**: Extended animation library
@@ -293,16 +314,19 @@ const canSelectConsecutive = () => {
 ### ✅ Strengths
 
 1. **Architecture Excellence**
+
    - Modern Next.js App Router implementation
    - Clean separation of concerns
    - Proper component organization
 
 2. **User Experience**
+
    - Intuitive booking workflow
    - Smart form validation
    - Real-time feedback systems
 
 3. **Database Design**
+
    - Well-structured relational schema
    - Proper indexing and constraints
    - Flexible booking system
@@ -315,6 +339,7 @@ const canSelectConsecutive = () => {
 ### ⚠️ Areas for Improvement
 
 1. **Security & Authentication**
+
    ```javascript
    // Missing: Authentication middleware
    // Missing: Admin panel security
@@ -323,6 +348,7 @@ const canSelectConsecutive = () => {
    ```
 
 2. **Error Handling**
+
    ```javascript
    // Inconsistent error response formats
    // Missing error boundaries in React
@@ -330,6 +356,7 @@ const canSelectConsecutive = () => {
    ```
 
 3. **TypeScript Migration**
+
    ```javascript
    // Current: JavaScript implementation
    // Recommended: TypeScript for type safety
@@ -339,31 +366,35 @@ const canSelectConsecutive = () => {
 4. **Testing Coverage**
    ```javascript
    // Missing: Unit tests
-   // Missing: Integration tests  
+   // Missing: Integration tests
    // Missing: E2E test suite
    ```
 
 ## 🚀 Roadmap & Recommendations
 
 ### Phase 1: Security & Stability
+
 - [ ] Implement NextAuth.js authentication
 - [ ] Add admin dashboard with role-based access
 - [ ] Implement API rate limiting
 - [ ] Add input validation and sanitization
 
 ### Phase 2: Code Quality
+
 - [ ] Migrate to TypeScript
 - [ ] Add comprehensive test suite (Jest + Testing Library)
 - [ ] Implement error boundaries
 - [ ] Add API documentation (OpenAPI/Swagger)
 
 ### Phase 3: Feature Enhancement
+
 - [ ] Email notification system
 - [ ] Payment gateway integration
 - [ ] Mobile responsive design
 - [ ] Real-time booking updates
 
 ### Phase 4: Performance & Monitoring
+
 - [ ] Add caching strategy (Redis)
 - [ ] Implement monitoring (Sentry)
 - [ ] Performance optimization
@@ -372,6 +403,7 @@ const canSelectConsecutive = () => {
 ## 🧪 Testing Strategy
 
 ### Recommended Test Structure
+
 ```
 __tests__/
 ├── components/         # Component unit tests
@@ -382,6 +414,7 @@ __tests__/
 ```
 
 ### Test Coverage Goals
+
 - **Components**: 80%+ coverage
 - **API Routes**: 90%+ coverage
 - **Business Logic**: 95%+ coverage
@@ -390,12 +423,14 @@ __tests__/
 ## 📈 Performance Metrics
 
 ### Current Performance
+
 - **Build Time**: ~30s (with Turbopack)
 - **Bundle Size**: Optimized with Next.js
 - **Database Queries**: Efficient with Prisma
 - **Loading Speed**: Fast with SSR/SSG
 
 ### Optimization Opportunities
+
 - Image optimization (next/image)
 - Code splitting (dynamic imports)
 - Database query optimization
@@ -404,6 +439,7 @@ __tests__/
 ## 🤝 Contributing
 
 ### Development Workflow
+
 1. Fork the repository
 2. Create feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit changes (`git commit -m 'Add amazing feature'`)
@@ -411,6 +447,7 @@ __tests__/
 5. Open Pull Request
 
 ### Code Standards
+
 - Follow ESLint configuration
 - Use Prettier for formatting
 - Write meaningful commit messages
@@ -444,4 +481,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Overall Assessment: 8/10** ⭐⭐⭐⭐⭐⭐⭐⭐
 
-*This is a well-architected, modern web application with excellent user experience design and solid technical implementation. With security enhancements and testing, it's ready for production deployment.*
+_This is a well-architected, modern web application with excellent user experience design and solid technical implementation. With security enhancements and testing, it's ready for production deployment._
