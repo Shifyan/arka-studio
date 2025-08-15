@@ -113,7 +113,7 @@ export default function Booking() {
               <TabsContent value="Data Diri">
                 <div>
                   <div>
-                    <Label hmtlFor="nama" className="text-[18px]">
+                    <Label htmlFor="nama" className="text-[18px]">
                       Nama Lengkap
                     </Label>
                     <Input
@@ -124,7 +124,7 @@ export default function Booking() {
                     />
                   </div>
                   <div className="mt-[20px]">
-                    <Label hmtlFor="email" className="text-[18px]">
+                    <Label htmlFor="email" className="text-[18px]">
                       Email
                     </Label>
                     <Input
@@ -135,7 +135,7 @@ export default function Booking() {
                     />
                   </div>
                   <div className="mt-[20px]">
-                    <Label hmtlFor="handphone" className="text-[18px] s">
+                    <Label htmlFor="handphone" className="text-[18px] s">
                       No HP
                     </Label>
                     <Input
@@ -146,7 +146,7 @@ export default function Booking() {
                     />
                   </div>
                   <div className="mt-[20px]">
-                    <Label hmtlFor="packages" className="text-[18px] mb-[10px]">
+                    <Label htmlFor="packages" className="text-[18px] mb-[10px]">
                       Pilihan Paket
                     </Label>
                     <Select
@@ -168,7 +168,7 @@ export default function Booking() {
                     </Select>
                   </div>
                   <div className="mt-[20px]">
-                    <Label hmtlFor="packages" className="text-[18px] mb-[10px]">
+                    <Label htmlFor="packages" className="text-[18px] mb-[10px]">
                       Pilihan Pembayaran
                     </Label>
                     <Select
