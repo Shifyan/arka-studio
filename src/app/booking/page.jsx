@@ -16,12 +16,29 @@ import {
 } from "@/components/ui/select";
 import useStore from "@/lib/store";
 import { Calendar } from "@/components/ui/calendar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function Booking() {
   const [nama, setNama] = useState("");
   const [email, setEmail] = useState("");
   const [noHp, setNoHp] = useState("");
-  const { packages, fetchPackages } = useStore();
+  const {
+    packages,
+    bookings,
+    fetchPackages,
+    fetchBookings,
+    getBookedSessionsForDate,
+    formatDate,
+  } = useStore();
   const [selectedPackages, setSelectedPackages] = useState("");
   const [paymentMethod, setPaymentMethod] = useState([
     "Bayar Tunai",
@@ -29,6 +46,9 @@ export default function Booking() {
   ]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [date, setDate] = useState(new Date());
+  const [formattedDate, setFormattedDate] = useState("");
+  const [bookedSessionsForSelectedDate, setBookedSessionsForSelectedDate] =
+    useState([]);
   const [availableSessionsCount, setAvailableSessionsCount] = useState("");
   const [session, setSession] = useState([
     { id: 1, time: "09:00 - 09:30" },
@@ -49,10 +69,40 @@ export default function Booking() {
     { id: 16, time: "16:30 - 17:00" },
   ]);
   const [selectedSession, setSelectedSession] = useState([]);
+  const [notes, setNotes] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // AlertDialog states
+  const [alertDialog, setAlertDialog] = useState({
+    open: false,
+    type: "error", // "error", "success", "warning"
+    title: "",
+    description: "",
+    onConfirm: () => {},
+    confirmText: "OK",
+    showCancel: false,
+  });
+
+  useEffect(() => {
+    console.log(date);
+  }, [date]);
 
   useEffect(() => {
     fetchPackages();
+    fetchBookings();
   }, []);
+
+  // Update formatted date ketika date berubah
+  useEffect(() => {
+    if (date) {
+      setFormattedDate(formatDate(date));
+      // Update booked sessions untuk tanggal yang dipilih
+      const bookedSessions = getBookedSessionsForDate(date);
+      setBookedSessionsForSelectedDate(bookedSessions);
+      // Reset selected sessions ketika tanggal berubah
+      setSelectedSession([]);
+    }
+  }, [date, bookings]);
 
   useEffect(() => {
     if (selectedPackages) {
@@ -72,20 +122,115 @@ export default function Booking() {
     console.log("Selected Session:", selectedSession);
   }, [selectedSession]);
 
-  // Reset selected sessions when package changes
-  useEffect(() => {
-    if (availableSessionsCount) {
-      setSelectedSession([]);
+  // Helper function untuk menampilkan alert dialog
+  const showAlert = (type, title, description, onConfirm = () => {}, confirmText = "OK", showCancel = false) => {
+    setAlertDialog({
+      open: true,
+      type,
+      title,
+      description,
+      onConfirm,
+      confirmText,
+      showCancel,
+    });
+  };
+
+  const closeAlert = () => {
+    setAlertDialog(prev => ({ ...prev, open: false }));
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+
+    // Validasi data
+    if (
+      !nama ||
+      !email ||
+      !noHp ||
+      !selectedPackages ||
+      !selectedPaymentMethod
+    ) {
+      showAlert(
+        "warning",
+        "Data Tidak Lengkap",
+        "Harap lengkapi semua data diri, pilihan paket, dan metode pembayaran."
+      );
+      setIsSubmitting(false);
+      return;
     }
-  }, [availableSessionsCount]);
+    if (selectedSession.length !== availableSessionsCount) {
+      showAlert(
+        "warning",
+        "Sesi Belum Dipilih",
+        `Anda harus memilih tepat ${availableSessionsCount} sesi berurutan.`
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    const selectedPackage = packages.find((p) => p.name === selectedPackages);
+
+    const bookingData = {
+      name: nama,
+      email,
+      phone: noHp,
+      packageId: selectedPackage?.id, // Gunakan ID paket
+      date: date.toISOString(), // Format tanggal ke ISO string
+      sessionNumbers: selectedSession.sort((a, b) => a - b),
+      notes,
+      paymentMethod: selectedPaymentMethod,
+    };
+
+    try {
+      const response = await fetch("/api/booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        showAlert(
+          "success",
+          "Booking Berhasil!",
+          `Booking Anda berhasil dibuat. Nomor Invoice: ${result.data.booking.invoiceNumber}`,
+          () => {
+            // Reset form atau redirect setelah user klik OK
+            window.location.reload();
+          },
+          "OK"
+        );
+      } else {
+        // Tangani error dari server (e.g., sesi sudah dibooking)
+        showAlert(
+          "error",
+          "Booking Gagal",
+          result.msg || "Terjadi kesalahan saat melakukan booking."
+        );
+      }
+    } catch (error) {
+      console.error("Error submitting booking:", error);
+      showAlert(
+        "error",
+        "Kesalahan Sistem",
+        "Terjadi kesalahan koneksi. Silakan periksa koneksi internet Anda dan coba lagi."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <div className=" flex justify-between items-start my-[20px] mx-[20px]">
-      <div className="relative ">
-        <Link href="/" className="absolute top-5 left-5 z-10 ">
+    <>
+      <div className="flex gap-6 my-[20px] mx-[20px] min-h-screen">
+      <div className="relative w-[480px] flex-shrink-0">
+        <Link href="/" className="absolute top-5 left-5 z-10">
           <Button
             variant="secondary"
-            className="size-12 rounded-full  cursor-pointer"
+            className="size-12 rounded-full cursor-pointer shadow-lg"
             size="icon"
           >
             <CircleArrowLeft className="size-10"></CircleArrowLeft>
@@ -94,9 +239,10 @@ export default function Booking() {
         <Image
           src="/booking-pic.jpg"
           width={480}
-          height={0}
+          height={725}
           alt="Booking Pic"
-        ></Image>
+          className="object-cover h-[725px] w-full rounded-lg shadow-lg"
+        />
       </div>
       <div className="grow">
         <div className="flex justify-center mt-[10px]">
@@ -189,16 +335,46 @@ export default function Booking() {
                       </SelectContent>
                     </Select>
                   </div>
+                  <div className="mt-[20px]">
+                    <Label htmlFor="notes" className="text-[18px] mb-[10px]">
+                      Catatan (Opsional)
+                    </Label>
+                    <Input
+                      id="notes"
+                      placeholder="Masukkan catatan tambahan..."
+                      value={notes}
+                      className="mt-[10px]"
+                      onChange={(e) => setNotes(e.target.value)}
+                    />
+                  </div>
                 </div>
               </TabsContent>
               <TabsContent value="Waktu">
-                <div className="flex justify-center">
+                <div className="flex flex-col items-center">
                   <Calendar
                     mode="single"
                     selected={date}
                     onSelect={setDate}
                     className="w-[380px]"
+                    captionLayout="dropdown"
+                    modifiersStyles={{ weekend: { color: "red" } }}
                   ></Calendar>
+
+                  {/* Display formatted date */}
+                  {formattedDate && (
+                    <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-blue-700 font-medium text-center">
+                        📅 Tanggal terpilih:{" "}
+                        <span className="font-bold">{formattedDate}</span>
+                      </p>
+                      {bookedSessionsForSelectedDate.length > 0 && (
+                        <p className="text-orange-600 text-sm mt-1 text-center">
+                          ⚠️ Sesi yang sudah terbooking:{" "}
+                          {bookedSessionsForSelectedDate.join(", ")}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </TabsContent>
               <TabsContent value="Sesi">
@@ -228,6 +404,8 @@ export default function Booking() {
                     {session.map((sesi) => {
                       const isSelected = selectedSession.includes(sesi.id);
                       const isDisabled = !availableSessionsCount;
+                      const isBookedByOthers =
+                        bookedSessionsForSelectedDate.includes(sesi.id);
 
                       // Function to check if session can be selected based on consecutive rule
                       const canSelectConsecutive = () => {
@@ -279,7 +457,13 @@ export default function Booking() {
                       const canSelect = canSelectConsecutive();
 
                       const handleSessionClick = () => {
-                        if (isDisabled || (!canSelect && !isSelected)) return;
+                        // Jangan izinkan click jika sesi sudah dibooking orang lain
+                        if (
+                          isDisabled ||
+                          (!canSelect && !isSelected) ||
+                          isBookedByOthers
+                        )
+                          return;
 
                         if (isSelected) {
                           // Remove from selection
@@ -296,11 +480,17 @@ export default function Booking() {
                         <button
                           key={sesi.id}
                           onClick={handleSessionClick}
-                          disabled={isDisabled || (!canSelect && !isSelected)}
+                          disabled={
+                            isDisabled ||
+                            (!canSelect && !isSelected) ||
+                            isBookedByOthers
+                          }
                           className={`
-                            py-2 px-4 border-2 rounded-lg text-center transition-all duration-200
+                            py-2 px-4 border-2 rounded-lg text-center transition-all duration-200 relative
                             ${
-                              isDisabled
+                              isBookedByOthers
+                                ? "border-red-300 bg-red-50 text-red-500 cursor-not-allowed opacity-75"
+                                : isDisabled
                                 ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
                                 : !canSelect && !isSelected
                                 ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
@@ -314,6 +504,13 @@ export default function Booking() {
                             Sesi {sesi.id}
                           </div>
                           <div className="text-xs">{sesi.time}</div>
+                          {isBookedByOthers && (
+                            <div className="absolute top-0 right-0 transform translate-x-1 -translate-y-1">
+                              <span className="text-xs bg-red-500 text-white px-1 py-0.5 rounded-full font-bold">
+                                ✕
+                              </span>
+                            </div>
+                          )}
                         </button>
                       );
                     })}
@@ -366,13 +563,15 @@ export default function Booking() {
                   {/* Tombol Kirim */}
                   <div className="mt-4 flex justify-center">
                     <Button
-                      className="px-8 py-3 text-lg font-semibold"
+                      className="px-8 py-3 text-lg font-semibold hover:cursor-pointer"
                       size="lg"
                       disabled={
-                        selectedSession.length !== availableSessionsCount
+                        selectedSession.length !== availableSessionsCount ||
+                        isSubmitting
                       }
+                      onClick={handleSubmit}
                     >
-                      Kirim Booking
+                      {isSubmitting ? "Memproses..." : "Kirim Booking"}
                     </Button>
                   </div>
                 </div>
@@ -381,6 +580,48 @@ export default function Booking() {
           </Tabs>
         </div>
       </div>
-    </div>
+      </div>
+      
+      {/* AlertDialog component */}
+      <AlertDialog open={alertDialog.open} onOpenChange={closeAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {alertDialog.type === "success" && "✅ "}
+              {alertDialog.type === "error" && "❌ "}
+              {alertDialog.type === "warning" && "⚠️ "}
+              {alertDialog.title}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {alertDialog.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            {alertDialog.showCancel && (
+              <AlertDialogCancel onClick={closeAlert}>
+                Batal
+              </AlertDialogCancel>
+            )}
+            <AlertDialogAction
+              onClick={() => {
+                alertDialog.onConfirm();
+                closeAlert();
+              }}
+              className={
+                alertDialog.type === "success"
+                  ? "bg-green-600 hover:bg-green-700"
+                  : alertDialog.type === "error"
+                  ? "bg-red-600 hover:bg-red-700"
+                  : alertDialog.type === "warning"
+                  ? "bg-yellow-600 hover:bg-yellow-700"
+                  : ""
+              }
+            >
+              {alertDialog.confirmText}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

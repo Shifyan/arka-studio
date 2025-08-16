@@ -6,7 +6,7 @@ export default function Hero() {
   return (
     <div className="  py-[30px] ">
       <div className="flex">
-        <div className="w-[668px] max-h-[670px] me-[40px] ms-[110px]">
+        <div className="w-[668px] max-h-[670px] mt-[20px] me-[40px] ms-[110px]">
           <h1 className="font-bold text-[76px] leading-tight space-y-2">
             <span className="  rounded-b-[20px]  pe-3 ">Unleash The</span>
             <br />
@@ -16,14 +16,14 @@ export default function Hero() {
               Photography
             </span>
           </h1>
-          <h2 className="font-normal text-[16px]  pt-4 rounded-b-[20px] max-w-[568px] ">
+          <h2 className="font-normal text-[16px]  mt-[40px] rounded-b-[20px] max-w-[568px] ">
             Di Arka Studio, kami fokus menangkap momen-momen paling berharga
             dalam hidup Anda dan mengubahnya jadi karya visual yang penuh makna.
             Dengan tim fotografer yang berpengalaman dan penuh semangat, kami
             siap bercerita lewat lensa dan memastikan setiap jepretan
             mencerminkan perjalanan unik Anda.
           </h2>
-          <div className="mt-[16px]">
+          <div className="mt-[40px]">
             <Link href="/booking">
               <Button className=" cursor-pointer hover:bg-red-950 bg-red-900 text-white px-[48px] py-[28px] font-medium text-[20px] transform duration-200 ease-in">
                 Book Your Session Now &gt;
@@ -31,7 +31,7 @@ export default function Hero() {
             </Link>
           </div>
         </div>
-        <div className="relative w-full h-[530px]">
+        <div className="relative w-full h-[600px]">
           {/* Gambar */}
           <Image src="/hero.jpg" alt="Hero" fill className="object-cover" />
 
