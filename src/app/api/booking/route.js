@@ -121,10 +121,10 @@ export async function POST(request) {
           Lihat Detail Booking
         </a>
       </p>
-      
-      <p style="font-size: 12px; color: gray;">Email ini dikirim otomatis, mohon jangan dibalas.</p>
-      <p style="font-size: 12px; color: gray;">Harap jangan membagian Kode Invoice ke orang yang tidak dipercaya.</p>
-
+      <div style="margin-top: 12px; margin-bottom: 12px;">
+        <p style="font-size: 12px; margin: 0; color: gray;">Email ini dikirim otomatis, mohon jangan dibalas.</p>
+        <p style="font-size: 12px; margin: 0; color: gray;">Harap jangan membagian Kode Invoice ke orang yang tidak dipercaya.</p>
+      </div>
     </div>
   `,
     });
