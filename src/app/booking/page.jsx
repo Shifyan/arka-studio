@@ -16,12 +16,29 @@ import {
 } from "@/components/ui/select";
 import useStore from "@/lib/store";
 import { Calendar } from "@/components/ui/calendar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function Booking() {
   const [nama, setNama] = useState("");
   const [email, setEmail] = useState("");
   const [noHp, setNoHp] = useState("");
-  const { packages, fetchPackages } = useStore();
+  const {
+    packages,
+    bookings,
+    fetchPackages,
+    fetchBookings,
+    getBookedSessionsForDate,
+    formatDate,
+  } = useStore();
   const [selectedPackages, setSelectedPackages] = useState("");
   const [paymentMethod, setPaymentMethod] = useState([
     "Bayar Tunai",
@@ -29,6 +46,9 @@ export default function Booking() {
   ]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [date, setDate] = useState(new Date());
+  const [formattedDate, setFormattedDate] = useState("");
+  const [bookedSessionsForSelectedDate, setBookedSessionsForSelectedDate] =
+    useState([]);
   const [availableSessionsCount, setAvailableSessionsCount] = useState("");
   const [session, setSession] = useState([
     { id: 1, time: "09:00 - 09:30" },
@@ -49,10 +69,40 @@ export default function Booking() {
     { id: 16, time: "16:30 - 17:00" },
   ]);
   const [selectedSession, setSelectedSession] = useState([]);
+  const [notes, setNotes] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // AlertDialog states
+  const [alertDialog, setAlertDialog] = useState({
+    open: false,
+    type: "error", // "error", "success", "warning"
+    title: "",
+    description: "",
+    onConfirm: () => {},
+    confirmText: "OK",
+    showCancel: false,
+  });
+
+  useEffect(() => {
+    console.log(date);
+  }, [date]);
 
   useEffect(() => {
     fetchPackages();
+    fetchBookings();
   }, []);
+
+  // Update formatted date ketika date berubah
+  useEffect(() => {
+    if (date) {
+      setFormattedDate(formatDate(date));
+      // Update booked sessions untuk tanggal yang dipilih
+      const bookedSessions = getBookedSessionsForDate(date);
+      setBookedSessionsForSelectedDate(bookedSessions);
+      // Reset selected sessions ketika tanggal berubah
+      setSelectedSession([]);
+    }
+  }, [date, bookings]);
 
   useEffect(() => {
     if (selectedPackages) {
@@ -72,235 +122,393 @@ export default function Booking() {
     console.log("Selected Session:", selectedSession);
   }, [selectedSession]);
 
-  // Reset selected sessions when package changes
-  useEffect(() => {
-    if (availableSessionsCount) {
-      setSelectedSession([]);
+  // Helper function untuk menampilkan alert dialog
+  const showAlert = (
+    type,
+    title,
+    description,
+    onConfirm = () => {},
+    confirmText = "OK",
+    showCancel = false
+  ) => {
+    setAlertDialog({
+      open: true,
+      type,
+      title,
+      description,
+      onConfirm,
+      confirmText,
+      showCancel,
+    });
+  };
+
+  const closeAlert = () => {
+    setAlertDialog((prev) => ({ ...prev, open: false }));
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+
+    // Validasi data
+    if (
+      !nama ||
+      !email ||
+      !noHp ||
+      !selectedPackages ||
+      !selectedPaymentMethod
+    ) {
+      showAlert(
+        "warning",
+        "Data Tidak Lengkap",
+        "Harap lengkapi semua data diri, pilihan paket, dan metode pembayaran."
+      );
+      setIsSubmitting(false);
+      return;
     }
-  }, [availableSessionsCount]);
+    if (selectedSession.length !== availableSessionsCount) {
+      showAlert(
+        "warning",
+        "Sesi Belum Dipilih",
+        `Anda harus memilih tepat ${availableSessionsCount} sesi berurutan.`
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    const selectedPackage = packages.find((p) => p.name === selectedPackages);
+
+    const bookingData = {
+      name: nama,
+      email,
+      phone: noHp,
+      packageId: selectedPackage?.id, // Gunakan ID paket
+      date: date.toISOString(), // Format tanggal ke ISO string
+      sessionNumbers: selectedSession.sort((a, b) => a - b),
+      notes,
+      paymentMethod: selectedPaymentMethod,
+    };
+
+    try {
+      const response = await fetch("/api/booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        showAlert(
+          "success",
+          "Booking Berhasil!",
+          `Booking Anda berhasil dibuat. Nomor Invoice: ${result.data.booking.invoiceNumber}`,
+          () => {
+            // Reset form atau redirect setelah user klik OK
+            window.location.reload();
+          },
+          "OK"
+        );
+      } else {
+        // Tangani error dari server (e.g., sesi sudah dibooking)
+        showAlert(
+          "error",
+          "Booking Gagal",
+          result.msg || "Terjadi kesalahan saat melakukan booking."
+        );
+      }
+    } catch (error) {
+      console.error("Error submitting booking:", error);
+      showAlert(
+        "error",
+        "Kesalahan Sistem",
+        "Terjadi kesalahan koneksi. Silakan periksa koneksi internet Anda dan coba lagi."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <div className=" flex justify-between items-start my-[20px] mx-[20px]">
-      <div className="relative ">
-        <Link href="/" className="absolute top-5 left-5 z-10 ">
-          <Button
-            variant="secondary"
-            className="size-12 rounded-full  cursor-pointer"
-            size="icon"
-          >
-            <CircleArrowLeft className="size-10"></CircleArrowLeft>
-          </Button>
-        </Link>
-        <Image
-          src="/booking-pic.jpg"
-          width={480}
-          height={0}
-          alt="Booking Pic"
-        ></Image>
-      </div>
-      <div className="grow">
-        <div className="flex justify-center mt-[10px]">
-          <h1 className=" font-bold text-[35px]">Book a Session</h1>
+    <>
+      <div className="flex gap-6 my-[20px] mx-[20px] min-h-screen">
+        <div className="relative w-[480px] flex-shrink-0">
+          <Link href="/" className="absolute top-5 left-5 z-10">
+            <Button
+              variant="secondary"
+              className="size-12 rounded-full cursor-pointer shadow-lg"
+              size="icon"
+            >
+              <CircleArrowLeft className="size-10"></CircleArrowLeft>
+            </Button>
+          </Link>
+          <Image
+            src="/booking-pic.jpg"
+            width={480}
+            height={725}
+            alt="Booking Pic"
+            className="object-cover h-[725px] w-full rounded-lg shadow-lg"
+          />
         </div>
-        <div className="mt-[15px] mx-[80px]">
-          <Tabs defaultValue="Data Diri">
-            <TabsList className="flex justify-between mx-[140px]">
-              <TabsTrigger value="Data Diri">Data Diri</TabsTrigger>
-              <TabsTrigger value="Waktu">Tanggal</TabsTrigger>
-              <TabsTrigger value="Sesi">Sesi</TabsTrigger>
-            </TabsList>
-            <div className="mt-[10px] mx-[50px] ">
-              <TabsContent value="Data Diri">
-                <div>
+        <div className="grow">
+          <div className="flex justify-center mt-[10px]">
+            <h1 className=" font-bold text-[35px]">Book a Session</h1>
+          </div>
+          <div className="mt-[15px] mx-[80px]">
+            <Tabs defaultValue="Data Diri">
+              <TabsList className="flex justify-between mx-[140px]">
+                <TabsTrigger value="Data Diri">Data Diri</TabsTrigger>
+                <TabsTrigger value="Waktu">Tanggal</TabsTrigger>
+                <TabsTrigger value="Sesi">Sesi</TabsTrigger>
+              </TabsList>
+              <div className="mt-[10px] mx-[50px] ">
+                <TabsContent value="Data Diri">
                   <div>
-                    <Label htmlFor="nama" className="text-[18px]">
-                      Nama Lengkap
-                    </Label>
-                    <Input
-                      id="nama"
-                      className="mt-[10px]"
-                      defaultValue={nama}
-                      onChange={(e) => setNama(e.target.value)}
-                    />
-                  </div>
-                  <div className="mt-[20px]">
-                    <Label htmlFor="email" className="text-[18px]">
-                      Email
-                    </Label>
-                    <Input
-                      id="email"
-                      defaultValue={email}
-                      className="mt-[10px]"
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-                  <div className="mt-[20px]">
-                    <Label htmlFor="handphone" className="text-[18px] s">
-                      No HP
-                    </Label>
-                    <Input
-                      id="handphone"
-                      defaultValue={noHp}
-                      className="mt-[10px]"
-                      onChange={(e) => setNoHp(e.target.value)}
-                    />
-                  </div>
-                  <div className="mt-[20px]">
-                    <Label htmlFor="packages" className="text-[18px] mb-[10px]">
-                      Pilihan Paket
-                    </Label>
-                    <Select
-                      defaultValue={selectedPackages}
-                      onValueChange={setSelectedPackages}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Packages"></SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {packages.map((e, i) => {
-                          return (
-                            <SelectItem value={e.name} key={i}>
-                              {`Paket ${e.name}, Harga ${e.price}, Durasi ${e.duration} Menit`}
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="mt-[20px]">
-                    <Label htmlFor="packages" className="text-[18px] mb-[10px]">
-                      Pilihan Pembayaran
-                    </Label>
-                    <Select
-                      defaultValue={selectedPaymentMethod}
-                      onValueChange={setSelectedPaymentMethod}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Payment Method"></SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {paymentMethod.map((e, i) => {
-                          return (
-                            <SelectItem value={e} key={i}>
-                              {e}
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </TabsContent>
-              <TabsContent value="Waktu">
-                <div className="flex justify-center">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    className="w-[380px]"
-                  ></Calendar>
-                </div>
-              </TabsContent>
-              <TabsContent value="Sesi">
-                <div>
-                  {/* Alert jika belum memilih paket */}
-                  {!availableSessionsCount && (
-                    <div className=" px-4 py-2 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-red-700 font-medium">
-                        ⚠️ Silakan pilih paket terlebih dahulu di tab "Data
-                        Diri"
-                      </p>
+                    <div>
+                      <Label htmlFor="nama" className="text-[18px]">
+                        Nama Lengkap
+                      </Label>
+                      <Input
+                        id="nama"
+                        className="mt-[10px]"
+                        defaultValue={nama}
+                        onChange={(e) => setNama(e.target.value)}
+                      />
                     </div>
-                  )}
-
-                  {/* Informasi jumlah sesi yang harus dipilih */}
-                  {availableSessionsCount && (
-                    <div className=" py-2 px-3 bg-blue-50 border border-blue-200 rounded-lg">
-                      <p className="text-blue-700 font-medium">
-                        📋 Anda perlu memilih {availableSessionsCount} sesi
-                        berurutan ({selectedSession.length}/
-                        {availableSessionsCount} terpilih)
-                      </p>
+                    <div className="mt-[20px]">
+                      <Label htmlFor="email" className="text-[18px]">
+                        Email
+                      </Label>
+                      <Input
+                        id="email"
+                        defaultValue={email}
+                        className="mt-[10px]"
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
                     </div>
-                  )}
+                    <div className="mt-[20px]">
+                      <Label htmlFor="handphone" className="text-[18px] s">
+                        No HP
+                      </Label>
+                      <Input
+                        id="handphone"
+                        defaultValue={noHp}
+                        className="mt-[10px]"
+                        onChange={(e) => setNoHp(e.target.value)}
+                      />
+                    </div>
+                    <div className="mt-[20px]">
+                      <Label
+                        htmlFor="packages"
+                        className="text-[18px] mb-[10px]"
+                      >
+                        Pilihan Paket
+                      </Label>
+                      <Select
+                        defaultValue={selectedPackages}
+                        onValueChange={setSelectedPackages}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select Packages"></SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {packages.map((e, i) => {
+                            return (
+                              <SelectItem value={e.name} key={i}>
+                                {`Paket ${e.name}, Harga ${e.price}, Durasi ${e.duration} Menit`}
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="mt-[20px]">
+                      <Label
+                        htmlFor="packages"
+                        className="text-[18px] mb-[10px]"
+                      >
+                        Pilihan Pembayaran
+                      </Label>
+                      <Select
+                        defaultValue={selectedPaymentMethod}
+                        onValueChange={setSelectedPaymentMethod}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select Payment Method"></SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {paymentMethod.map((e, i) => {
+                            return (
+                              <SelectItem value={e} key={i}>
+                                {e}
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="mt-[20px]">
+                      <Label htmlFor="notes" className="text-[18px] mb-[10px]">
+                        Catatan (Opsional)
+                      </Label>
+                      <Input
+                        id="notes"
+                        placeholder="Masukkan catatan tambahan..."
+                        value={notes}
+                        className="mt-[10px]"
+                        onChange={(e) => setNotes(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </TabsContent>
+                <TabsContent value="Waktu">
+                  <div className="flex flex-col items-center">
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={setDate}
+                      className="w-[380px]"
+                      captionLayout="dropdown"
+                      modifiersStyles={{ weekend: { color: "red" } }}
+                    ></Calendar>
 
-                  <div className="grid grid-cols-4 gap-2 mt-[15px]">
-                    {session.map((sesi) => {
-                      const isSelected = selectedSession.includes(sesi.id);
-                      const isDisabled = !availableSessionsCount;
+                    {/* Display formatted date */}
+                    {formattedDate && (
+                      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p className="text-blue-700 font-medium text-center">
+                          📅 Tanggal terpilih:{" "}
+                          <span className="font-bold">{formattedDate}</span>
+                        </p>
+                        {bookedSessionsForSelectedDate.length > 0 && (
+                          <p className="text-orange-600 text-sm mt-1 text-center">
+                            ⚠️ Sesi yang sudah terbooking:{" "}
+                            {bookedSessionsForSelectedDate.join(", ")}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </TabsContent>
+                <TabsContent value="Sesi">
+                  <div>
+                    {/* Alert jika belum memilih paket */}
+                    {!availableSessionsCount && (
+                      <div className=" px-4 py-2 bg-red-50 border border-red-200 rounded-lg">
+                        <p className="text-red-700 font-medium">
+                          ⚠️ Silakan pilih paket terlebih dahulu di tab "Data
+                          Diri"
+                        </p>
+                      </div>
+                    )}
 
-                      // Function to check if session can be selected based on consecutive rule
-                      const canSelectConsecutive = () => {
-                        if (selectedSession.length === 0) {
-                          // First selection - any session can be selected
-                          return true;
-                        }
+                    {/* Informasi jumlah sesi yang harus dipilih */}
+                    {availableSessionsCount && (
+                      <div className=" py-2 px-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p className="text-blue-700 font-medium">
+                          📋 Anda perlu memilih {availableSessionsCount} sesi
+                          berurutan ({selectedSession.length}/
+                          {availableSessionsCount} terpilih)
+                        </p>
+                      </div>
+                    )}
 
-                        if (isSelected) {
-                          // Already selected - can always deselect
-                          return true;
-                        }
+                    <div className="grid grid-cols-4 gap-2 mt-[15px]">
+                      {session.map((sesi) => {
+                        const isSelected = selectedSession.includes(sesi.id);
+                        const isDisabled = !availableSessionsCount;
+                        const isBookedByOthers =
+                          bookedSessionsForSelectedDate.includes(sesi.id);
 
-                        if (selectedSession.length >= availableSessionsCount) {
-                          // Already reached max selection
-                          return false;
-                        }
-
-                        // Check if this session is adjacent to the current consecutive block
-                        const sortedSelected = [...selectedSession].sort(
-                          (a, b) => a - b
-                        );
-
-                        // Verify current selection is consecutive
-                        let isCurrentConsecutive = true;
-                        for (let i = 1; i < sortedSelected.length; i++) {
-                          if (sortedSelected[i] !== sortedSelected[i - 1] + 1) {
-                            isCurrentConsecutive = false;
-                            break;
+                        // Function to check if session can be selected based on consecutive rule
+                        const canSelectConsecutive = () => {
+                          if (selectedSession.length === 0) {
+                            // First selection - any session can be selected
+                            return true;
                           }
-                        }
 
-                        if (!isCurrentConsecutive) {
-                          // Current selection is not consecutive, should not happen but handle it
-                          return false;
-                        }
+                          if (isSelected) {
+                            // Already selected - can always deselect
+                            return true;
+                          }
 
-                        const minSelected = sortedSelected[0];
-                        const maxSelected =
-                          sortedSelected[sortedSelected.length - 1];
+                          if (
+                            selectedSession.length >= availableSessionsCount
+                          ) {
+                            // Already reached max selection
+                            return false;
+                          }
 
-                        // Session must be adjacent (one position before min or after max)
-                        return (
-                          sesi.id === minSelected - 1 ||
-                          sesi.id === maxSelected + 1
-                        );
-                      };
-
-                      const canSelect = canSelectConsecutive();
-
-                      const handleSessionClick = () => {
-                        if (isDisabled || (!canSelect && !isSelected)) return;
-
-                        if (isSelected) {
-                          // Remove from selection
-                          setSelectedSession(
-                            selectedSession.filter((id) => id !== sesi.id)
+                          // Check if this session is adjacent to the current consecutive block
+                          const sortedSelected = [...selectedSession].sort(
+                            (a, b) => a - b
                           );
-                        } else {
-                          // Add to selection (already checked canSelect above)
-                          setSelectedSession([...selectedSession, sesi.id]);
-                        }
-                      };
 
-                      return (
-                        <button
-                          key={sesi.id}
-                          onClick={handleSessionClick}
-                          disabled={isDisabled || (!canSelect && !isSelected)}
-                          className={`
-                            py-2 px-4 border-2 rounded-lg text-center transition-all duration-200
+                          // Verify current selection is consecutive
+                          let isCurrentConsecutive = true;
+                          for (let i = 1; i < sortedSelected.length; i++) {
+                            if (
+                              sortedSelected[i] !==
+                              sortedSelected[i - 1] + 1
+                            ) {
+                              isCurrentConsecutive = false;
+                              break;
+                            }
+                          }
+
+                          if (!isCurrentConsecutive) {
+                            // Current selection is not consecutive, should not happen but handle it
+                            return false;
+                          }
+
+                          const minSelected = sortedSelected[0];
+                          const maxSelected =
+                            sortedSelected[sortedSelected.length - 1];
+
+                          // Session must be adjacent (one position before min or after max)
+                          return (
+                            sesi.id === minSelected - 1 ||
+                            sesi.id === maxSelected + 1
+                          );
+                        };
+
+                        const canSelect = canSelectConsecutive();
+
+                        const handleSessionClick = () => {
+                          // Jangan izinkan click jika sesi sudah dibooking orang lain
+                          if (
+                            isDisabled ||
+                            (!canSelect && !isSelected) ||
+                            isBookedByOthers
+                          )
+                            return;
+
+                          if (isSelected) {
+                            // Remove from selection
+                            setSelectedSession(
+                              selectedSession.filter((id) => id !== sesi.id)
+                            );
+                          } else {
+                            // Add to selection (already checked canSelect above)
+                            setSelectedSession([...selectedSession, sesi.id]);
+                          }
+                        };
+
+                        return (
+                          <button
+                            key={sesi.id}
+                            onClick={handleSessionClick}
+                            disabled={
+                              isDisabled ||
+                              (!canSelect && !isSelected) ||
+                              isBookedByOthers
+                            }
+                            className={`
+                            py-2 px-4 border-2 rounded-lg text-center transition-all duration-200 relative
                             ${
-                              isDisabled
+                              isBookedByOthers
+                                ? "border-red-300 bg-red-50 text-red-500 cursor-not-allowed opacity-75"
+                                : isDisabled
                                 ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
                                 : !canSelect && !isSelected
                                 ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
@@ -309,78 +517,133 @@ export default function Booking() {
                                 : "border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:scale-105 cursor-pointer"
                             }
                           `}
-                        >
-                          <div className="font-semibold text-sm mb-1">
-                            Sesi {sesi.id}
+                          >
+                            <div className="font-semibold text-sm mb-1">
+                              Sesi {sesi.id}
+                            </div>
+                            <div className="text-xs">{sesi.time}</div>
+                            {isBookedByOthers && (
+                              <div className="absolute top-0 right-0 transform translate-x-1 -translate-y-1">
+                                <span className="text-xs bg-red-500 text-white px-1 py-0.5 rounded-full font-bold">
+                                  ✕
+                                </span>
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Konfirmasi sesi - selalu tampil untuk menjaga height */}
+                    <div className="mt-2 py-2 px-3 bg-green-50 border border-green-200 rounded-lg">
+                      {selectedSession.length > 0 ? (
+                        <>
+                          <p className="text-green-700 font-medium mb-2 ">
+                            ✅ Sesi terpilih ({selectedSession.length}/
+                            {availableSessionsCount}):
+                          </p>
+                          <div className="text-green-800 font-medium">
+                            {(() => {
+                              const sortedSessions = selectedSession.sort(
+                                (a, b) => a - b
+                              );
+                              const firstSession = session.find(
+                                (s) => s.id === sortedSessions[0]
+                              );
+                              const lastSession = session.find(
+                                (s) =>
+                                  s.id ===
+                                  sortedSessions[sortedSessions.length - 1]
+                              );
+
+                              if (sortedSessions.length === 1) {
+                                return `Sesi ${sortedSessions[0]}: ${firstSession?.time}`;
+                              } else {
+                                const startTime =
+                                  firstSession?.time.split(" - ")[0];
+                                const endTime =
+                                  lastSession?.time.split(" - ")[1];
+                                return `Sesi ${sortedSessions[0]}-${
+                                  sortedSessions[sortedSessions.length - 1]
+                                }: ${startTime} - ${endTime}`;
+                              }
+                            })()}
                           </div>
-                          <div className="text-xs">{sesi.time}</div>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Konfirmasi sesi - selalu tampil untuk menjaga height */}
-                  <div className="mt-2 py-2 px-3 bg-green-50 border border-green-200 rounded-lg">
-                    {selectedSession.length > 0 ? (
-                      <>
-                        <p className="text-green-700 font-medium mb-2 ">
-                          ✅ Sesi terpilih ({selectedSession.length}/
-                          {availableSessionsCount}):
+                        </>
+                      ) : (
+                        <p className="text-gray-500 font-medium">
+                          {availableSessionsCount
+                            ? `Pilih ${availableSessionsCount} sesi berurutan`
+                            : "Belum ada sesi yang dipilih"}
                         </p>
-                        <div className="text-green-800 font-medium">
-                          {(() => {
-                            const sortedSessions = selectedSession.sort(
-                              (a, b) => a - b
-                            );
-                            const firstSession = session.find(
-                              (s) => s.id === sortedSessions[0]
-                            );
-                            const lastSession = session.find(
-                              (s) =>
-                                s.id ===
-                                sortedSessions[sortedSessions.length - 1]
-                            );
+                      )}
+                    </div>
 
-                            if (sortedSessions.length === 1) {
-                              return `Sesi ${sortedSessions[0]}: ${firstSession?.time}`;
-                            } else {
-                              const startTime =
-                                firstSession?.time.split(" - ")[0];
-                              const endTime = lastSession?.time.split(" - ")[1];
-                              return `Sesi ${sortedSessions[0]}-${
-                                sortedSessions[sortedSessions.length - 1]
-                              }: ${startTime} - ${endTime}`;
-                            }
-                          })()}
-                        </div>
-                      </>
-                    ) : (
-                      <p className="text-gray-500 font-medium">
-                        {availableSessionsCount
-                          ? `Pilih ${availableSessionsCount} sesi berurutan`
-                          : "Belum ada sesi yang dipilih"}
-                      </p>
-                    )}
+                    {/* Tombol Kirim */}
+                    <div className="mt-4 flex justify-center">
+                      <Button
+                        className="px-8 py-3 text-lg font-semibold hover:cursor-pointer"
+                        size="lg"
+                        disabled={
+                          selectedSession.length !== availableSessionsCount ||
+                          isSubmitting
+                        }
+                        onClick={handleSubmit}
+                      >
+                        {isSubmitting ? "Memproses..." : "Kirim Booking"}
+                      </Button>
+                    </div>
                   </div>
-
-                  {/* Tombol Kirim */}
-                  <div className="mt-4 flex justify-center">
-                    <Button
-                      className="px-8 py-3 text-lg font-semibold"
-                      size="lg"
-                      disabled={
-                        selectedSession.length !== availableSessionsCount
-                      }
-                    >
-                      Kirim Booking
-                    </Button>
-                  </div>
-                </div>
-              </TabsContent>
-            </div>
-          </Tabs>
+                </TabsContent>
+              </div>
+            </Tabs>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* AlertDialog component */}
+      <AlertDialog open={alertDialog.open} onOpenChange={closeAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {alertDialog.type === "success" && "✅ "}
+              {alertDialog.type === "error" && "❌ "}
+              {alertDialog.type === "warning" && "⚠️ "}
+              {alertDialog.title}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="mt-[10px]">
+              {alertDialog.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            {alertDialog.showCancel && (
+              <AlertDialogCancel
+                className="px-6 hover:cursor-pointer"
+                onClick={closeAlert}
+              >
+                Batal
+              </AlertDialogCancel>
+            )}
+            <AlertDialogAction
+              onClick={() => {
+                alertDialog.onConfirm();
+                closeAlert();
+              }}
+              className={
+                alertDialog.type === "success"
+                  ? "px-[20px] bg-green-600 hover:bg-green-700 hover:cursor-pointer"
+                  : alertDialog.type === "error"
+                  ? "px-[20px] bg-red-600 hover:bg-red-700 hover:cursor-pointer"
+                  : alertDialog.type === "warning"
+                  ? "px-[20px] bg-yellow-600 hover:bg-yellow-700 hover:cursor-pointer"
+                  : "px-[20px]"
+              }
+            >
+              {alertDialog.confirmText}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
