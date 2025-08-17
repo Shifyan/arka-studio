@@ -44,7 +44,7 @@ export default function Footer() {
             variant="link"
             className="cursor-pointer text-[20px] font-semibold p-0"
           >
-            Cek Pesanan
+            Cek Jadwal
           </Button>
         </Link>
       </div>

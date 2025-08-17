@@ -155,7 +155,7 @@ export default function CekBooking() {
         <Card className="w-[500px] px-[30px] py-[55px]">
           <CardHeader>
             <CardTitle className="flex justify-center">
-              <h1 className="text-[23px] font-bold">CEK PESANAN ANDA</h1>
+              <h1 className="text-[23px] font-bold">CEK JADWAL ANDA</h1>
             </CardTitle>
           </CardHeader>
           <CardContent className="mt-[20px]">
