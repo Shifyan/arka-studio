@@ -28,22 +28,34 @@ export default function Navbar() {
       {/* Center - Menu (hidden on mobile) */}
       <div className="hidden md:flex flex-row gap-6">
         <Link href="/">
-          <Button variant="link" className="text-[18px] font-semibold">
+          <Button
+            variant="link"
+            className="text-[18px] font-semibold hover:cursor-pointer"
+          >
             Home
           </Button>
         </Link>
         <Link href="/services">
-          <Button variant="link" className="text-[18px] font-semibold">
+          <Button
+            variant="link"
+            className="text-[18px] font-semibold hover:cursor-pointer"
+          >
             Services
           </Button>
         </Link>
         <Link href="/about">
-          <Button variant="link" className="text-[18px] font-semibold">
+          <Button
+            variant="link"
+            className="text-[18px] font-semibold hover:cursor-pointer"
+          >
             About Us
           </Button>
         </Link>
         <Link href="/cek-booking">
-          <Button variant="link" className="text-[18px] font-semibold">
+          <Button
+            variant="link"
+            className="text-[18px] font-semibold hover:cursor-pointer"
+          >
             Cek Jadwal
           </Button>
         </Link>
@@ -54,7 +66,7 @@ export default function Navbar() {
         <Link href="/booking">
           <Button
             variant="outline"
-            className="font-medium text-[18px] px-6 py-3 text-red-900 border-red-900 hover:bg-red-900 hover:text-white transition"
+            className="font-medium text-[18px] px-6 py-3 text-red-900 border-red-900 hover:cursor-pointer hover:bg-red-900 hover:text-white transition"
           >
             Book Now
           </Button>
