@@ -82,7 +82,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="absolute top-[90px] left-0 w-full bg-white shadow-md flex flex-col items-center gap-4 py-6 z-50">
+        <div className="absolute top-[80px] left-0 w-full bg-white shadow-md flex flex-col items-center gap-4 py-6 z-50">
           <Link href="/" onClick={() => setOpen(false)}>
             Home
           </Link>

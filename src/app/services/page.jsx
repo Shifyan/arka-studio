@@ -49,7 +49,7 @@ export default function Services() {
 
   return (
     <div>
-      <div className="mt-[10px] md:mt-[20px]">
+      <div className="mt-[5px] md:mt-[20px]">
         <Navbar></Navbar>
       </div>
       <div className="mx-[15px]">
