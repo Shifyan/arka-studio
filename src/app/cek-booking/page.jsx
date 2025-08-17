@@ -27,6 +27,7 @@ import { Label } from "@radix-ui/react-label";
 import { useState } from "react";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { TriangleAlert } from "lucide-react";
 
 export default function CekBooking() {
   const [name, setName] = useState("");
@@ -38,8 +39,45 @@ export default function CekBooking() {
     data: null,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [isCancelLoading, setIsCancelLoading] = useState(false);
+  const [isCanceled, setIsCanceled] = useState(false);
+
+  const handleCancelSubmit = async () => {
+    setIsCancelLoading(true);
+
+    // Tambahkan pengecekan untuk memastikan data ada
+    if (!dialogContent.data || !dialogContent.data.invoiceNumber) {
+      console.error("Invoice data tidak tersedia");
+      setIsCancelLoading(false);
+      return;
+    }
+
+    const invoiceNumber = dialogContent.data.invoiceNumber;
+    try {
+      const response = await fetch("api/booking/cancel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ invoiceNumber }),
+      });
+      console.log(response);
+
+      // Refresh data setelah pembatalan berhasil
+      if (response.ok) {
+        handleSubmit();
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsCancelLoading(false);
+    }
+  };
 
   const handleSubmit = async () => {
+    // Reset state canceled di awal
+    setIsCanceled(false);
+
     // Validasi form kosong
     if (!name.trim() || !invoiceNumber.trim()) {
       setDialogContent({
@@ -66,12 +104,19 @@ export default function CekBooking() {
 
       if (response.ok && result.data) {
         // Invoice ditemukan
+        const invoiceData = result.data.invoiceData[0];
         setDialogContent({
           title: "Invoice Ditemukan",
           description: "Berikut adalah detail pesanan Anda:",
-          data: result.data.invoiceData[0],
+          data: invoiceData,
         });
-        console.log(result.data.invoiceData[0]);
+
+        // Gunakan data langsung dari response, bukan dari state yang belum ter-update
+        const status = invoiceData.status;
+        if (status === "CANCELED" || status === "COMPLETED") {
+          setIsCanceled(true);
+        }
+        console.log(dialogContent);
       } else {
         // Invoice tidak ditemukan atau error
         setDialogContent({
@@ -80,7 +125,9 @@ export default function CekBooking() {
             "Maaf, invoice dengan nama dan nomor tersebut tidak ditemukan. Silakan periksa kembali data yang Anda masukkan.",
           data: null,
         });
+        setIsCanceled(false); // Reset status canceled jika invoice tidak ditemukan
       }
+      console.log(isCanceled);
     } catch (error) {
       console.error("Error:", error);
       setDialogContent({
@@ -105,7 +152,7 @@ export default function CekBooking() {
         <Navbar></Navbar>
       </div>
       <div className="w-full flex-1 flex justify-center items-center">
-        <Card className="w-[500px] px-[30px] py-[35px]">
+        <Card className="w-[500px] px-[30px] py-[55px]">
           <CardHeader>
             <CardTitle className="flex justify-center">
               <h1 className="text-[23px] font-bold">CEK PESANAN ANDA</h1>
@@ -215,11 +262,58 @@ export default function CekBooking() {
                     <span>{dialogContent.data.notes}</span>
                   </div>
                 )}
+
+                {/* Status Messages */}
+                {dialogContent.data.status === "COMPLETED" && (
+                  <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-blue-800 font-medium">
+                        Pesanan Selesai
+                      </span>
+                    </div>
+                    <p className="text-blue-700 text-sm mt-1">
+                      Pesanan Anda telah selesai. Terima kasih telah menggunakan
+                      layanan kami!
+                    </p>
+                  </div>
+                )}
+
+                {dialogContent.data.status === "CANCELED" && (
+                  <div className="bg-red-50 border border-red-200 p-3 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      <span className="text-red-800 font-medium">
+                        Pesanan Dibatalkan
+                      </span>
+                    </div>
+                    <p className="text-red-700 text-sm mt-1">
+                      Pesanan ini telah dibatalkan. Jika ada pertanyaan, silakan
+                      hubungi customer service.
+                    </p>
+                  </div>
+                )}
+
+                {/* Tombol Batalkan hanya untuk status PAID dan PENDING */}
+                {!isCanceled &&
+                  (dialogContent.data.status === "PAID" ||
+                    dialogContent.data.status === "PENDING") && (
+                    <Button
+                      variant="destructive"
+                      className="hover:cursor-pointer"
+                      onClick={handleCancelSubmit}
+                      disabled={isCancelLoading}
+                    >
+                      <TriangleAlert />
+                      {isCancelLoading
+                        ? "Proses Pembatalan..."
+                        : "Batalkan Pesanan"}
+                    </Button>
+                  )}
               </div>
             </div>
           )}
 
-          <AlertDialogFooter>
+          <AlertDialogFooter className="mt-[20px]">
             <AlertDialogAction
               className="hover:cursor-pointer"
               onClick={() => setIsDialogOpen(false)}
