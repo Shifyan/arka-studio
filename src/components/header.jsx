@@ -2,69 +2,97 @@
 import { Prociono } from "next/font/google";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+
 const prociono = Prociono({
   subsets: ["latin"],
   weight: "400",
 });
 
 export default function Navbar() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className="flex flex-row items-center">
-      <div className="left-header basis-1/5 ps-[114px]  pt-[13px]">
-        <div className="w-fit ">
-          <h1
-            className={`${prociono.className} text-[28px] leading-[28px] text-right`}
-          >
-            Arka <br />
-            Studio
-          </h1>
-        </div>
+    <div className="flex flex-row items-center justify-between px-6 py-4 shadow-md">
+      {/* Left - Logo */}
+      <div className="left-header">
+        <h1
+          className={`${prociono.className} text-[24px] leading-[24px] text-left`}
+        >
+          Arka <br />
+          Studio
+        </h1>
       </div>
 
-      <div className="center-header flex flex-row basis-3/5 justify-center pt-[25px]">
+      {/* Center - Menu (hidden on mobile) */}
+      <div className="hidden md:flex flex-row gap-6">
         <Link href="/">
-          <Button
-            variant="link"
-            className="cursor-pointer text-[20px] font-semibold "
-          >
+          <Button variant="link" className="text-[18px] font-semibold">
             Home
           </Button>
         </Link>
         <Link href="/services">
-          <Button
-            variant="link"
-            className="cursor-pointer text-[20px] font-semibold  "
-          >
+          <Button variant="link" className="text-[18px] font-semibold">
             Services
           </Button>
         </Link>
         <Link href="/about">
-          <Button
-            variant="link"
-            className="cursor-pointer text-[20px] font-semibold "
-          >
+          <Button variant="link" className="text-[18px] font-semibold">
             About Us
           </Button>
         </Link>
         <Link href="/cek-booking">
-          <Button
-            variant="link"
-            className="cursor-pointer text-[20px] font-semibold "
-          >
+          <Button variant="link" className="text-[18px] font-semibold">
             Cek Jadwal
           </Button>
         </Link>
       </div>
-      <div className="right-header basis-1/5 pt-[11px]">
+
+      {/* Right - Book Now (hidden on mobile) */}
+      <div className="hidden md:block">
         <Link href="/booking">
           <Button
             variant="outline"
-            className="font-medium text-[20px] px-[30px] py-[22px] leading-[29px] cursor-pointer outline-1 text-red-900 border-red-900 hover:bg-red-900 hover:text-white transform ease-in duration-200 "
+            className="font-medium text-[18px] px-6 py-3 text-red-900 border-red-900 hover:bg-red-900 hover:text-white transition"
           >
             Book Now
           </Button>
         </Link>
       </div>
+
+      {/* Burger menu (shown on mobile) */}
+      <div className="md:hidden">
+        <button onClick={() => setOpen(!open)}>
+          {open ? <X size={28} /> : <Menu size={28} />}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {open && (
+        <div className="absolute top-[90px] left-0 w-full bg-white shadow-md flex flex-col items-center gap-4 py-6 z-50">
+          <Link href="/" onClick={() => setOpen(false)}>
+            Home
+          </Link>
+          <Link href="/services" onClick={() => setOpen(false)}>
+            Services
+          </Link>
+          <Link href="/about" onClick={() => setOpen(false)}>
+            About Us
+          </Link>
+          <Link href="/cek-booking" onClick={() => setOpen(false)}>
+            Cek Jadwal
+          </Link>
+          <Link href="/booking" onClick={() => setOpen(false)}>
+            <Button
+              variant="outline"
+              className="font-medium text-[18px] px-6 py-3 text-red-900 border-red-900 hover:bg-red-900 hover:text-white transition"
+            >
+              Book Now
+            </Button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

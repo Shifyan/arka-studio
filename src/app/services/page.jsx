@@ -93,7 +93,7 @@ export default function Services() {
                 </div>
                 <div className="ms-[20px] mb-[20px]">
                   <CardDescription className="mt-[20px] text-black">
-                    <Link href="#">
+                    <Link href="/booking">
                       <Button
                         variant="outline"
                         size="sm"
