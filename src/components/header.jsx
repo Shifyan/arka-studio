@@ -51,7 +51,7 @@ export default function Navbar() {
             variant="link"
             className="cursor-pointer text-[20px] font-semibold "
           >
-            Cek Pesanan
+            Cek Jadwal
           </Button>
         </Link>
       </div>
