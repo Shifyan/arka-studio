@@ -39,12 +39,12 @@ export default function Footer() {
             About Us
           </Button>
         </Link>
-        <Link href="/portofolio">
+        <Link href="/cek-booking">
           <Button
             variant="link"
             className="cursor-pointer text-[20px] font-semibold p-0"
           >
-            Portofolio
+            Cek Pesanan
           </Button>
         </Link>
       </div>
