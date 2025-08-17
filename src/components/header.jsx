@@ -46,12 +46,12 @@ export default function Navbar() {
             About Us
           </Button>
         </Link>
-        <Link href="/portofolio">
+        <Link href="/cek-booking">
           <Button
             variant="link"
             className="cursor-pointer text-[20px] font-semibold "
           >
-            Portofolio
+            Cek Pesanan
           </Button>
         </Link>
       </div>
