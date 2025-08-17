@@ -43,21 +43,23 @@ export default function Hero() {
       <div className="lg:hidden px-4 sm:px-6">
         {/* Hero Image for Mobile */}
         <div className="relative w-full h-[300px] sm:h-[400px] mb-6 rounded-lg overflow-hidden">
-          <Image 
-            src="/hero.jpg" 
-            alt="Hero" 
-            fill 
-            className="object-cover" 
+          <Image
+            src="/hero.jpg"
+            alt="Hero"
+            fill
+            className="object-cover"
             priority
           />
           {/* Dark overlay for better text readability */}
           <div className="absolute inset-0 bg-black/30 z-10" />
-          
+
           {/* Text overlay on image for mobile */}
           <div className="absolute inset-0 z-20 flex flex-col justify-center items-center text-white text-center px-4">
             <h1 className="font-bold text-[28px] sm:text-[36px] leading-tight mb-3">
-              Unleash The<br />
-              Art Of<br />
+              Unleash The
+              <br />
+              Art Of
+              <br />
               Photography
             </h1>
           </div>
@@ -72,10 +74,10 @@ export default function Hero() {
             siap bercerita lewat lensa dan memastikan setiap jepretan
             mencerminkan perjalanan unik Anda.
           </h2>
-          
+
           <div className="">
             <Link href="/booking">
-              <Button className="cursor-pointer hover:bg-red-950 bg-red-900 text-white px-6 sm:px-8 py-3 sm:py-4 font-medium text-[16px] sm:text-[18px] transform duration-200 ease-in w-full sm:w-auto">
+              <Button className="cursor-pointer hover:bg-red-950 bg-red-900 text-white px-6 sm:px-8 py-5 sm:py-6 font-medium text-[16px] sm:text-[18px] transform duration-200 ease-in w-full sm:w-auto">
                 Book Your Session Now &gt;
               </Button>
             </Link>
