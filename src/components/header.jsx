@@ -98,7 +98,7 @@ export default function Navbar() {
           <Link href="/booking" onClick={() => setOpen(false)}>
             <Button
               variant="outline"
-              className="font-medium text-[18px] px-6 py-3 text-red-900 border-red-900 hover:bg-red-900 hover:text-white transition"
+              className="font-medium text-[18px] px-6 py-3 text-red-900 border-red-900 active:bg-red-900 active:text-white transition"
             >
               Book Now
             </Button>

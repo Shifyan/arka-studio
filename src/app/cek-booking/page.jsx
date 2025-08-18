@@ -152,7 +152,7 @@ export default function CekBooking() {
         <Navbar></Navbar>
       </div>
       <div className="w-full flex-1 flex justify-center items-center">
-        <Card className="w-[500px] px-[30px] md:py-[55px] max-md:border-0 shadow-none">
+        <Card className="w-[400px] px-[15px] md:py-[55px] max-md:border-0 shadow-none">
           <CardHeader>
             <CardTitle className="flex justify-center">
               <h1 className="text-[23px] font-bold">CEK JADWAL ANDA</h1>

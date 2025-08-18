@@ -28,7 +28,7 @@ export default function About() {
             </Link>
           </div>
         </div>
-        <div className="flex max-md:flex-col mt-[60px] md:mt-[80px] gap-[30px]">
+        <div className="flex max-md:flex-col mt-[60px] md:justify-between md:mt-[80px] gap-[30px]">
           <div className="grid grid-cols-2 gap-[15px] md:gap-[25px] ">
             <div className="max-w-[270px]">
               <h1 className="font-bold text-[30px] md:text-[40px]">1.</h1>

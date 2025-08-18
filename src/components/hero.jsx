@@ -77,7 +77,7 @@ export default function Hero() {
 
           <div className="">
             <Link href="/booking">
-              <Button className="cursor-pointer hover:bg-red-950 bg-red-900 text-white px-6 sm:px-8 py-5 sm:py-6 font-medium text-[16px] sm:text-[18px] transform duration-200 ease-in w-full sm:w-auto">
+              <Button className="cursor-pointer max-md:active:bg-red-950  hover:bg-red-950 bg-red-900 text-white px-6 sm:px-8 py-5 sm:py-6 font-medium text-[16px] sm:text-[18px] transform duration-200 ease-in w-full sm:w-auto">
                 Book Your Session Now &gt;
               </Button>
             </Link>
