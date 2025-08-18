@@ -232,8 +232,8 @@ export default function Booking() {
 
   return (
     <>
-      <div className="flex gap-6 my-[20px] mx-[20px] min-h-screen">
-        <div className="relative w-[480px] flex-shrink-0 max-md:hidden">
+      <div className="flex gap-6 md:my-[20px] max-md:justify-center md:mx-[20px] min-h-screen">
+        <div className="relative md:w-[480px] flex-shrink-0 max-md:hidden">
           <Link href="/" className="absolute top-5 left-5 z-10">
             <Button
               variant="secondary"
@@ -251,29 +251,30 @@ export default function Booking() {
             className="object-cover h-[725px] w-full rounded-lg shadow-lg max-md:hidden"
           />
         </div>
-        <div className="grow">
-          <div className="md:hidden max-md:mt-[20px] max-md:ms-[10px]">
-            <Link href="/" className=" ">
+        <div className="md:grow max-md:max-w-[375px] max-md:w-full max-md:px-[20px]">
+          <div className="md:hidden max-md:mt-[20px]">
+            <Link href="/" className="">
               <Button
-                variant="secondary"
-                className="size-12 rounded-full cursor-pointer shadow-lg"
-                size="icon"
+                variant="outline"
+                className="py-[15px] border-0 shadow-none hover:cursor-pointer"
               >
-                <CircleArrowLeft className="size-10"></CircleArrowLeft>
+                <CircleArrowLeft className="size-6"></CircleArrowLeft>Kembali
               </Button>
             </Link>
           </div>
           <div className="flex justify-center mt-[10px]">
-            <h1 className=" font-bold text-[35px]">Book a Session</h1>
+            <h1 className=" font-bold text-[25px] text-center md:text-[35px]">
+              Book a Session
+            </h1>
           </div>
-          <div className="mt-[15px] mx-[80px]">
+          <div className="mt-[15px] md:mx-[80px] max-md:mb-[40px]">
             <Tabs defaultValue="Data Diri">
-              <TabsList className="flex justify-between mx-[140px]">
+              <TabsList className="flex justify-between md:mx-[140px]">
                 <TabsTrigger value="Data Diri">Data Diri</TabsTrigger>
                 <TabsTrigger value="Waktu">Tanggal</TabsTrigger>
                 <TabsTrigger value="Sesi">Sesi</TabsTrigger>
               </TabsList>
-              <div className="mt-[10px] mx-[50px] ">
+              <div className="mt-[10px] md:mx-[50px] ">
                 <TabsContent value="Data Diri">
                   <div>
                     <div>
@@ -327,7 +328,15 @@ export default function Booking() {
                           {packages.map((e, i) => {
                             return (
                               <SelectItem value={e.name} key={i}>
-                                {`Paket ${e.name}, Harga ${e.price}, Durasi ${e.duration} Menit`}
+                                {/* Tampilan mobile */}
+                                <span className="block md:hidden">
+                                  {e.name}, {e.price}, {e.duration} Menit
+                                </span>
+
+                                {/* Tampilan desktop */}
+                                <span className="hidden md:block">
+                                  {`Paket ${e.name}, Harga ${e.price}, Durasi ${e.duration} Menit`}
+                                </span>
                               </SelectItem>
                             );
                           })}
@@ -379,7 +388,7 @@ export default function Booking() {
                       mode="single"
                       selected={date}
                       onSelect={setDate}
-                      className="w-[380px]"
+                      className="w-[280px] md:w-[380px]"
                       captionLayout="dropdown"
                       modifiersStyles={{ weekend: { color: "red" } }}
                     ></Calendar>
@@ -405,7 +414,7 @@ export default function Booking() {
                   <div>
                     {/* Alert jika belum memilih paket */}
                     {!availableSessionsCount && (
-                      <div className=" px-4 py-2 bg-red-50 border border-red-200 rounded-lg">
+                      <div className="max-md:text-[14px] px-4 py-2 bg-red-50 border border-red-200 rounded-lg">
                         <p className="text-red-700 font-medium">
                           ⚠️ Silakan pilih paket terlebih dahulu di tab "Data
                           Diri"
@@ -415,7 +424,7 @@ export default function Booking() {
 
                     {/* Informasi jumlah sesi yang harus dipilih */}
                     {availableSessionsCount && (
-                      <div className=" py-2 px-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="max-md:text-[14px] py-2 px-3 bg-blue-50 border border-blue-200 rounded-lg">
                         <p className="text-blue-700 font-medium">
                           📋 Anda perlu memilih {availableSessionsCount} sesi
                           berurutan ({selectedSession.length}/
@@ -424,7 +433,7 @@ export default function Booking() {
                       </div>
                     )}
 
-                    <div className="grid grid-cols-4 gap-2 mt-[15px]">
+                    <div className="grid md:grid-cols-4 grid-cols-3 gap-2 mt-[15px] ">
                       {session.map((sesi) => {
                         const isSelected = selectedSession.includes(sesi.id);
                         const isDisabled = !availableSessionsCount;
@@ -515,7 +524,7 @@ export default function Booking() {
                               isBookedByOthers
                             }
                             className={`
-                            py-2 px-4 border-2 rounded-lg text-center transition-all duration-200 relative
+                            py-2 md:px-4 px-2 border-2 rounded-lg text-center transition-all duration-200 relative 
                             ${
                               isBookedByOthers
                                 ? "border-red-300 bg-red-50 text-red-500 cursor-not-allowed opacity-75"
@@ -532,7 +541,7 @@ export default function Booking() {
                             <div className="font-semibold text-sm mb-1">
                               Sesi {sesi.id}
                             </div>
-                            <div className="text-xs">{sesi.time}</div>
+                            <div className="text-xs ">{sesi.time}</div>
                             {isBookedByOthers && (
                               <div className="absolute top-0 right-0 transform translate-x-1 -translate-y-1">
                                 <span className="text-xs bg-red-500 text-white px-1 py-0.5 rounded-full font-bold">
@@ -546,7 +555,7 @@ export default function Booking() {
                     </div>
 
                     {/* Konfirmasi sesi - selalu tampil untuk menjaga height */}
-                    <div className="mt-2 py-2 px-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="mt-2 py-2 px-3 bg-green-50 border border-green-200 rounded-lg max-md:text-[14px]">
                       {selectedSession.length > 0 ? (
                         <>
                           <p className="text-green-700 font-medium mb-2 ">
