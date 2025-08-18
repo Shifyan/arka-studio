@@ -233,7 +233,7 @@ export default function Booking() {
   return (
     <>
       <div className="flex gap-6 my-[20px] mx-[20px] min-h-screen">
-        <div className="relative w-[480px] flex-shrink-0">
+        <div className="relative w-[480px] flex-shrink-0 max-md:hidden">
           <Link href="/" className="absolute top-5 left-5 z-10">
             <Button
               variant="secondary"
@@ -248,10 +248,21 @@ export default function Booking() {
             width={480}
             height={725}
             alt="Booking Pic"
-            className="object-cover h-[725px] w-full rounded-lg shadow-lg"
+            className="object-cover h-[725px] w-full rounded-lg shadow-lg max-md:hidden"
           />
         </div>
         <div className="grow">
+          <div className="md:hidden max-md:mt-[20px] max-md:ms-[10px]">
+            <Link href="/" className=" ">
+              <Button
+                variant="secondary"
+                className="size-12 rounded-full cursor-pointer shadow-lg"
+                size="icon"
+              >
+                <CircleArrowLeft className="size-10"></CircleArrowLeft>
+              </Button>
+            </Link>
+          </div>
           <div className="flex justify-center mt-[10px]">
             <h1 className=" font-bold text-[35px]">Book a Session</h1>
           </div>

@@ -148,11 +148,11 @@ export default function CekBooking() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="mt-[20px]">
+      <div className="mt-[5px] md:mt-[20px]">
         <Navbar></Navbar>
       </div>
       <div className="w-full flex-1 flex justify-center items-center">
-        <Card className="w-[500px] px-[30px] py-[55px]">
+        <Card className="w-[500px] px-[30px] md:py-[55px] max-md:border-0 shadow-none">
           <CardHeader>
             <CardTitle className="flex justify-center">
               <h1 className="text-[23px] font-bold">CEK JADWAL ANDA</h1>
@@ -194,7 +194,7 @@ export default function CekBooking() {
 
       {/* Alert Dialog */}
       <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <AlertDialogContent className="max-w-lg">
+        <AlertDialogContent className="md:max-w-lg ">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-[25px]">
               {dialogContent.title}
@@ -221,7 +221,7 @@ export default function CekBooking() {
                   <span>{dialogContent.data.phone}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-medium">Nomor Invoice:</span>
+                  <span className="font-medium">No. Invoice:</span>
                   <span className="font-bold">
                     {dialogContent.data.invoiceNumber}
                   </span>
