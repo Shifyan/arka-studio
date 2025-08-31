@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useStore } from "zustand";
-export default function ThirdStep(onBack, errors, methods) {
+export default function ThirdStep(onBack, errors, methods, sessions) {
   const [availableSessionsCount, setAvailableSessionsCount] = useState("");
   const [packages] = useStore();
   const [watch] = methods;

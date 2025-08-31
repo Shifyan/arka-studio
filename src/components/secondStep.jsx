@@ -3,13 +3,15 @@ import Calendar from "./calendar";
 import { useState, useEffect } from "react";
 import useStore from "@/lib/store";
 
-export default function secondStep({ onNext, onBack, methods, error }) {
+export default function SecondStep({ onNext, onBack, methods }) {
   const [date, setDate] = useState(new Date());
   const [formatDate, getBookedSessionsForDate, bookings] = useStore();
   const [formattedDate, setFormattedDate] = useStore("");
   const [bookedSessionsForSelectedDate, setBookedSessionsForSelectedDate] =
     useState([]);
   const [setValue] = methods;
+
+  // Update formatted date ketika date berubah
   useEffect(() => {
     // Ubah Format Tanggal
     setFormattedDate(formatDate(date));
