@@ -2,15 +2,14 @@
 import Calendar from "./calendar";
 import { useState, useEffect } from "react";
 import useStore from "@/lib/store";
-import { useForm } from "react-hook-form";
 
-export default function secondStep() {
+export default function secondStep({ onNext, onBack, methods, error }) {
   const [date, setDate] = useState(new Date());
-  const [formatDate, getBookedSessionsForDate] = useStore();
+  const [formatDate, getBookedSessionsForDate, bookings] = useStore();
   const [formattedDate, setFormattedDate] = useStore("");
   const [bookedSessionsForSelectedDate, setBookedSessionsForSelectedDate] =
     useState([]);
-  const [setValue] = useForm();
+  const [setValue] = methods;
   useEffect(() => {
     // Ubah Format Tanggal
     setFormattedDate(formatDate(date));
@@ -21,7 +20,7 @@ export default function secondStep() {
 
     // Reset Pilihan Sesi
     setValue("selectedSession", []);
-  }, [date]);
+  }, [date, bookings]);
 
   useEffect(() => {
     setValue("tanggal", formattedDate);

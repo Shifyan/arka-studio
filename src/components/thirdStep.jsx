@@ -1,4 +1,20 @@
-export default function ThirdStep() {
+"use client";
+import { useState, useEffect } from "react";
+import { useStore } from "zustand";
+export default function ThirdStep(onBack, errors, methods) {
+  const [availableSessionsCount, setAvailableSessionsCount] = useState("");
+  const [packages] = useStore();
+  const [watch] = methods;
+  const selectedPackages = watch("selectedPackages");
+  useEffect(() => {
+    if (selectedPackages) {
+      const found = packages.find((pkg) => pkg.name === selectedPackages);
+      if (found) {
+        let sessionDuration = found.duration / 30;
+        setAvailableSessionsCount(sessionDuration);
+      }
+    }
+  }, [selectedPackages]);
   return (
     <div>
       {/* Alert jika belum memilih paket */}
