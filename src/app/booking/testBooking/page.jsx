@@ -30,10 +30,10 @@ import {
 // Multi Step Form
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import FirstStep from "@/components/firstStep";
 import SecondStep from "@/components/secondStep";
-
+import ThirdStep from "@/components/thirdStep";
 // Form Schema
 const formSchema = z.object({
   nama: z.string().min(1),
@@ -59,7 +59,6 @@ export default function Booking() {
     getBookedSessionsForDate,
     formatDate,
   } = useStore();
-  const [selectedPackages, setSelectedPackages] = useState("");
   const [paymentMethods, setPaymentMethods] = useState([
     "Bayar Tunai",
     "Transfer",
@@ -89,8 +88,8 @@ export default function Booking() {
     { id: 16, time: "16:30 - 17:00" },
   ]);
   const [selectedSession, setSelectedSession] = useState([]);
-  const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [notes, setNotes] = useState("");
 
   // AlertDialog states
   const [alertDialog, setAlertDialog] = useState({
@@ -127,8 +126,10 @@ export default function Booking() {
 
   const watch = methods.watch;
 
+  const control = methods.control;
+
   // Definisikan Step
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(3);
 
   // Fungsi nextStep & backStep
   const onNext = async () => {
@@ -156,6 +157,15 @@ export default function Booking() {
       ])
     );
   };
+
+  const selectedPackage = useWatch({
+    control: control,
+    name: "selectedPackage",
+  });
+
+  useEffect(() => {
+    console.log(selectedPackage);
+  }, [selectedPackage]);
 
   useEffect(() => {
     console.log(step);
@@ -187,14 +197,14 @@ export default function Booking() {
 
   // Durasi Session
   useEffect(() => {
-    if (selectedPackages) {
-      const found = packages.find((pkg) => pkg.id === selectedPackages);
+    if (selectedPackage) {
+      const found = packages.find((pkg) => pkg.id === selectedPackage);
       if (found) {
         let sessionDuration = found.duration / 30;
         setAvailableSessionsCount(sessionDuration);
       }
     }
-  }, [selectedPackages]);
+  }, [selectedPackage]);
 
   // useEffect(() => {
   //   console.log(availableSessionsCount);
@@ -367,6 +377,15 @@ export default function Booking() {
                     onBack={onBack}
                     onNext={onNext}
                     methods={methods}
+                  />
+                )}
+                {step === 3 && (
+                  <ThirdStep
+                    onBack={onBack}
+                    methods={methods}
+                    sessions={session}
+                    packages={packages}
+                    handleSubmit={handleSubmit}
                   />
                 )}
               </form>
