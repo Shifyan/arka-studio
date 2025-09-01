@@ -41,7 +41,9 @@ const formSchema = z.object({
   noHp: z.string().min(11, "Nomor HP tidak Valid"),
   selectedPackage: z.string().min(1),
   paymentMethod: z.string().min(1),
-  notes: z.string().min(0),
+  notes: z.string(),
+  date: z.date().min(new Date()),
+  sessionNumber: z.array(z.bigint().min(1)),
 });
 
 // PAGE BOOKING
@@ -112,6 +114,8 @@ export default function Booking() {
       selectedPackage: "",
       paymentMethod: "",
       notes: "",
+      date: new Date(),
+      sessionNumber: [],
     },
   });
 
@@ -124,7 +128,7 @@ export default function Booking() {
   const watch = methods.watch;
 
   // Definisikan Step
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(2);
 
   // Fungsi nextStep & backStep
   const onNext = async () => {
@@ -132,7 +136,11 @@ export default function Booking() {
     if (step === 1)
       valid = await trigger([
         "nama",
-        "email, noHp, , selectedPackage, paymentMethod, notes",
+        "email",
+        "noHp",
+        "selectedPackage",
+        "paymentMethod",
+        "notes",
       ]);
     if (step === 2) valid = await trigger(["date"]);
     if (valid) setStep((s) => s + 1);
@@ -144,6 +152,7 @@ export default function Booking() {
         "notes",
         "selectedPackage",
         "paymentMethod",
+        "date",
       ])
     );
   };
@@ -337,28 +346,31 @@ export default function Booking() {
               </Button>
             </Link>
           </div>
-          <div className="flex justify-center mt-[10px]">
-            <h1 className=" font-bold text-[25px] text-center md:text-[35px]">
-              Book a Session
-            </h1>
-          </div>
-          <div className="mt-[15px] md:mx-[80px] max-md:mb-[40px]">
-            <form onSubmit={handleSubmit(onSubmit)}>
-              {step === 1 && (
-                <FirstStep
-                  packages={packages}
-                  methods={methods}
-                  onNext={onNext}
-                  paymentMethods={paymentMethods}
-                />
-              )}
-              {step === 2 && (
-                <div>
-                  <h1>Hello</h1>
-                </div>
-                // <SecondStep onBack={onBack} onNext={onNext} methods={methods} />
-              )}
-            </form>
+          <div className="h-full flex flex-col">
+            <div className="flex justify-center mt-[10px] mb-[20px]">
+              <h1 className=" font-bold text-[25px] text-center md:text-[35px]">
+                Book a Session
+              </h1>
+            </div>
+            <div className="mt-[15px] md:mx-[80px] max-md:mb-[40px] flex-1">
+              <form onSubmit={handleSubmit(onSubmit)} className="h-full">
+                {step === 1 && (
+                  <FirstStep
+                    packages={packages}
+                    methods={methods}
+                    onNext={onNext}
+                    paymentMethods={paymentMethods}
+                  />
+                )}
+                {step === 2 && (
+                  <SecondStep
+                    onBack={onBack}
+                    onNext={onNext}
+                    methods={methods}
+                  />
+                )}
+              </form>
+            </div>
           </div>
         </div>
       </div>

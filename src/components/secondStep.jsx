@@ -1,15 +1,23 @@
 "use client";
-import Calendar from "./calendar";
 import { useState, useEffect } from "react";
 import useStore from "@/lib/store";
+import { Calendar } from "./ui/calendar";
+import { Controller } from "react-hook-form";
+import { Button } from "./ui/button";
 
 export default function SecondStep({ onNext, onBack, methods }) {
-  const [date, setDate] = useState(new Date());
-  const [formatDate, getBookedSessionsForDate, bookings] = useStore();
-  const [formattedDate, setFormattedDate] = useStore("");
+  const { formatDate, getBookedSessionsForDate, bookings } = useStore();
+  const [formattedDate, setFormattedDate] = useState("");
+  //  formattedDate,
+  //   setFormattedDate,
+
   const [bookedSessionsForSelectedDate, setBookedSessionsForSelectedDate] =
     useState([]);
-  const [setValue] = methods;
+  const setValue = methods.setValue;
+  const watch = methods.watch;
+  const control = methods.control;
+
+  const date = watch("date");
 
   // Update formatted date ketika date berubah
   useEffect(() => {
@@ -26,34 +34,63 @@ export default function SecondStep({ onNext, onBack, methods }) {
 
   useEffect(() => {
     setValue("tanggal", formattedDate);
+    console.log(date);
   }, [formattedDate]);
 
-  return (
-    <div className="flex flex-col items-center">
-      <Calendar
-        mode="single"
-        selected={date}
-        onSelect={setDate}
-        className="w-[280px] md:w-[380px]"
-        captionLayout="dropdown"
-        modifiersStyles={{ weekend: { color: "red" } }}
-      ></Calendar>
+  const selectCalendatHandle = (day, onChange) => {
+    if (day) {
+      onChange(day);
+    }
+  };
 
-      {/* Display formatted date */}
-      {formattedDate && (
-        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-blue-700 font-medium text-center">
-            📅 Tanggal terpilih:{" "}
-            <span className="font-bold">{formattedDate}</span>
-          </p>
-          {bookedSessionsForSelectedDate.length > 0 && (
-            <p className="text-orange-600 text-sm mt-1 text-center">
-              ⚠️ Sesi yang sudah terbooking:{" "}
-              {bookedSessionsForSelectedDate.join(", ")}
-            </p>
+  return (
+    <div className="flex flex-col justify-between h-full items-center">
+      <div>
+        <Controller
+          name="date"
+          control={control}
+          render={({ field }) => (
+            <Calendar
+              mode="single"
+              selected={field.value}
+              onSelect={(day) => selectCalendatHandle(day, field.onChange)}
+              className="w-[280px] md:w-[380px]"
+              captionLayout="dropdown"
+              modifiersStyles={{ weekend: { color: "red" } }}
+            />
           )}
-        </div>
-      )}
+        />
+
+        {/* Display formatted date */}
+        {formattedDate && (
+          <div className="mt-[25px] p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-blue-700 font-medium text-center">
+              📅 Tanggal terpilih:{" "}
+              <span className="font-bold">{formattedDate}</span>
+            </p>
+            {bookedSessionsForSelectedDate.length > 0 && (
+              <p className="text-orange-600 text-sm mt-1 text-center">
+                ⚠️ Sesi yang sudah terbooking:{" "}
+                {bookedSessionsForSelectedDate.join(", ")}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+      <div className="flex justify-between w-full mt-[50px]">
+        <Button
+          className="bg-red-700 hover:bg-red-800 hover:cursor-pointer"
+          onClick={onBack}
+        >
+          Kembali
+        </Button>
+        <Button
+          className="bg-blue-700 hover:bg-blue-800 hover:cursor-pointer"
+          onClick={onNext}
+        >
+          Selanjutnya
+        </Button>
+      </div>
     </div>
   );
 }
