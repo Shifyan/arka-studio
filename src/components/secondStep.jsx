@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import useStore from "@/lib/store";
 import { Calendar } from "./ui/calendar";
-import { Controller } from "react-hook-form";
+import { Controller, useWatch } from "react-hook-form";
 import { Button } from "./ui/button";
 
 export default function SecondStep({ onNext, onBack, methods }) {
@@ -17,7 +17,7 @@ export default function SecondStep({ onNext, onBack, methods }) {
   const watch = methods.watch;
   const control = methods.control;
 
-  const date = watch("date");
+  const date = useWatch({ control: control, name: "date" });
 
   // Update formatted date ketika date berubah
   useEffect(() => {
@@ -28,14 +28,16 @@ export default function SecondStep({ onNext, onBack, methods }) {
     const bookedSession = getBookedSessionsForDate(date);
     setBookedSessionsForSelectedDate(bookedSession);
 
-    // Reset Pilihan Sesi
-    setValue("selectedSession", []);
-  }, [date, bookings]);
-
-  useEffect(() => {
-    setValue("tanggal", formattedDate);
     console.log(date);
-  }, [formattedDate]);
+
+    // Reset Pilihan Sesi
+    setValue("sessionNumber", []);
+  }, [date]);
+
+  // useEffect(() => {
+  //   setValue("tanggal", formattedDate);
+  //   console.log(date);
+  // }, [formattedDate]);
 
   const selectCalendatHandle = (day, onChange) => {
     if (day) {

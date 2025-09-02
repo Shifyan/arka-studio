@@ -43,7 +43,7 @@ const formSchema = z.object({
   paymentMethod: z.string().min(1),
   notes: z.string(),
   date: z.date().min(new Date()),
-  sessionNumber: z.array(z.bigint().min(1)),
+  sessionNumber: z.array(z.number().min(1)),
 });
 
 // PAGE BOOKING
@@ -129,7 +129,7 @@ export default function Booking() {
   const control = methods.control;
 
   // Definisikan Step
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(1);
 
   // Fungsi nextStep & backStep
   const onNext = async () => {
@@ -321,8 +321,58 @@ export default function Booking() {
   //     setIsSubmitting(false);
   //   }
   // };
-  const onSubmit = () => {
-    alert("Sudah Submit");
+  const onSubmit = async (dataSubmit) => {
+    setIsSubmitting(true);
+    try {
+      const bookingData = {
+        name: dataSubmit.nama,
+        email: dataSubmit.email,
+        phone: dataSubmit.noHp,
+        packageId: dataSubmit.selectedPackage,
+        paymentMethod: dataSubmit.paymentMethod,
+        notes: dataSubmit.notes,
+        date: dataSubmit.date.toISOString(),
+        sessionNumbers: dataSubmit.sessionNumber,
+      };
+      const response = await fetch("/api/booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingData),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        setIsSubmitting(false);
+        showAlert(
+          "success",
+          "Booking Berhasil!",
+          `Booking Anda berhasil dibuat. Nomor Invoice: ${result.data.booking.invoiceNumber}`,
+          () => {
+            // Reset form atau redirect setelah user klik OK
+            window.location.reload();
+          },
+          "OK"
+        );
+      } else {
+        // Tangani error dari server (e.g., sesi sudah dibooking)
+        setIsSubmitting(false);
+        showAlert(
+          "error",
+          "Booking Gagal",
+          result.msg || "Terjadi kesalahan saat melakukan booking."
+        );
+      }
+    } catch (err) {
+      console.error("Error submitting booking:", err);
+      setIsSubmitting(false);
+      showAlert(
+        "error",
+        "Kesalahan Sistem",
+        "Terjadi kesalahan koneksi. Silakan periksa koneksi internet Anda dan coba lagi."
+      );
+    }
   };
   return (
     <>
@@ -385,7 +435,7 @@ export default function Booking() {
                     methods={methods}
                     sessions={session}
                     packages={packages}
-                    handleSubmit={handleSubmit}
+                    isSubmitting={isSubmitting}
                   />
                 )}
               </form>
