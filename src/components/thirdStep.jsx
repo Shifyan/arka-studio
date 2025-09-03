@@ -20,6 +20,7 @@ export default function ThirdStep({
   // ambil paket dan tanggal yang dipilih
   const selectedPackage = useWatch({ control, name: "selectedPackage" });
   const selectedDate = useWatch({ control, name: "date" }); // misal nama field "date"
+  const sessionNumber = useWatch({ control, name: "sessionNumber" });
 
   const getBookedSessionsForDate = useStore(
     (state) => state.getBookedSessionsForDate
@@ -201,12 +202,27 @@ export default function ThirdStep({
         >
           Kembali
         </Button>
-        <Button
-          className="bg-green-700 hover:bg-green-900 hover:cursor-pointer"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Memproses..." : "Kirim Booking"}
-        </Button>
+        {(() => {
+          if (sessionNumber.length === availableSessionsCount) {
+            return (
+              <Button
+                className="bg-green-700 hover:bg-green-900 hover:cursor-pointer"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Memproses..." : "Kirim Booking"}
+              </Button>
+            );
+          } else {
+            return (
+              <Button
+                className="bg-gray-700 hover:bg-grey-900 hover:cursor-pointer"
+                disabled={true}
+              >
+                Kirim Booking
+              </Button>
+            );
+          }
+        })()}
       </div>
     </div>
   );
