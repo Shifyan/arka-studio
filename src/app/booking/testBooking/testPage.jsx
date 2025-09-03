@@ -387,7 +387,7 @@ export default function Booking() {
     <>
       {/* <div className="flex flex-col md:flex-row gap-6 md:my-[20px] max-md:justify-center md:mx-[20px] min-h-screen md:min-h-0">
        */}
-      <div className="flex gap-6 flex-col md:flex-row md:my-[20px] max-md:justify-center md:mx-[20px] max-md:min-h-0">
+      <div className="flex gap-6 flex-col md:flex-col md:my-[20px] max-md:justify-center md:mx-[20px] max-md:min-h-0">
         <div className="relative md:w-[480px] flex-shrink-0 max-md:hidden">
           <Link href="/" className="absolute top-5 left-5 z-10">
             <Button
