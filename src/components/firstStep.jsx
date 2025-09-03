@@ -20,7 +20,7 @@ export default function FirstStep({
   const control = methods.control;
   const watch = methods.watch;
   return (
-    <div className="h-full flex flex-col justify-between">
+    <div className="md:h-full flex flex-col md:justify-between">
       <div>
         <div>
           <Label htmlFor="nama" className="text-[18px]">

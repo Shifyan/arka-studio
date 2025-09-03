@@ -42,8 +42,16 @@ const formSchema = z.object({
   selectedPackage: z.string().min(1),
   paymentMethod: z.string().min(1),
   notes: z.string(),
-  date: z.date().min(new Date()),
-  sessionNumber: z.array(z.number().min(1)),
+  date: z.date().refine(
+    (d) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // buang jam-menit
+      return d >= today;
+    },
+    { message: "Tanggal tidak boleh sebelum hari ini" }
+  ),
+
+  sessionNumber: z.array(z.number()).min(1),
 });
 
 // PAGE BOOKING
@@ -156,6 +164,7 @@ export default function Booking() {
         "date",
       ])
     );
+    console.log(step);
   };
 
   const selectedPackage = useWatch({
@@ -376,7 +385,9 @@ export default function Booking() {
   };
   return (
     <>
-      <div className="flex gap-6 md:my-[20px] max-md:justify-center md:mx-[20px] min-h-screen">
+      {/* <div className="flex flex-col md:flex-row gap-6 md:my-[20px] max-md:justify-center md:mx-[20px] min-h-screen md:min-h-0">
+       */}
+      <div className="flex gap-6 flex-col md:flex-col md:my-[20px] max-md:justify-center md:mx-[20px] max-md:min-h-0">
         <div className="relative md:w-[480px] flex-shrink-0 max-md:hidden">
           <Link href="/" className="absolute top-5 left-5 z-10">
             <Button
@@ -395,14 +406,15 @@ export default function Booking() {
             className="object-cover h-[725px] w-full rounded-lg shadow-lg max-md:hidden"
           />
         </div>
-        <div className="md:grow max-md:max-w-[375px] max-md:w-full max-md:px-[20px]">
-          <div className="md:hidden max-md:mt-[20px]">
+        <div className="md:grow max-md:w-full max-md:px-[20px]">
+          <div className="md:hidden max-md:mt-[20px] max-md:mb-[30px]">
             <Link href="/" className="">
               <Button
                 variant="outline"
-                className="py-[15px] border-0 shadow-none hover:cursor-pointer"
+                className="py-[15px] ps-0 text-[20px] border-0 shadow-none hover:cursor-pointer"
               >
-                <CircleArrowLeft className="size-6"></CircleArrowLeft>Kembali
+                <CircleArrowLeft className="size-8 "></CircleArrowLeft>
+                Kembali
               </Button>
             </Link>
           </div>
@@ -413,7 +425,7 @@ export default function Booking() {
               </h1>
             </div>
             <div className="mt-[15px] md:mx-[80px] max-md:mb-[40px] flex-1">
-              <form onSubmit={handleSubmit(onSubmit)} className="h-full">
+              <form onSubmit={handleSubmit(onSubmit)} className="md:h-full">
                 {step === 1 && (
                   <FirstStep
                     packages={packages}

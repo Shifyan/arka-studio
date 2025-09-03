@@ -47,7 +47,7 @@ export default function SecondStep({ onNext, onBack, methods }) {
 
   return (
     <div className="flex flex-col justify-between h-full items-center">
-      <div>
+      <div className="flex flex-col justify-center">
         <Controller
           name="date"
           control={control}
@@ -56,7 +56,7 @@ export default function SecondStep({ onNext, onBack, methods }) {
               mode="single"
               selected={field.value}
               onSelect={(day) => selectCalendatHandle(day, field.onChange)}
-              className="w-[280px] md:w-[380px]"
+              className="w-full md:w-[380px]"
               captionLayout="dropdown"
               modifiersStyles={{ weekend: { color: "red" } }}
             />

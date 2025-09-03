@@ -98,13 +98,13 @@ export default function ThirdStep({
 
                 return (
                   <>
-                    <p className="text-blue-700 font-medium">
+                    <p className="text-blue-700 md:font-medium">
                       📋 Anda perlu memilih {availableSessionsCount} sesi
                       berurutan ({selectedSession.length}/
                       {availableSessionsCount} terpilih)
                     </p>
 
-                    <div className="grid md:grid-cols-4 grid-cols-3 gap-4 mt-[40px]">
+                    <div className="grid md:grid-cols-4 grid-cols-3 gap-[6px] md:gap-4 mt-[40px]">
                       {sessions.map((sesi) => {
                         const isSelected = selectedSession.includes(sesi.id);
                         const isBookedByOthers =
@@ -195,7 +195,7 @@ export default function ThirdStep({
         )}
       </div>
 
-      <div className="flex justify-between">
+      <div className="flex justify-between mt-[50px]">
         <Button
           className="bg-red-700 hover:bg-red-900 hover:cursor-pointer"
           onClick={onBack}
