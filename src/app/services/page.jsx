@@ -2,6 +2,7 @@
 import Navbar from "@/components/header";
 import Footer from "@/components/footer";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,11 @@ export default function Services() {
   });
   // let [packages, setPackages] = useState([]);
   const { packages, fetchPackages } = useStore();
+  const router = useRouter();
 
+  const handleClick = (name) => {
+    router.push(`/booking?packageName=${name}`);
+  };
   useEffect(() => {
     fetchPackages();
   }, []);
@@ -98,16 +103,15 @@ export default function Services() {
                   </div>
                   <div className=" md:mb-[20px] mb-[10px]">
                     <CardDescription className="md:mt-[20px] mt-[5px] text-black">
-                      <Link href="/booking">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="cursor-pointer outline-black max-md:text-[10px]"
-                        >
-                          <ShoppingCart />
-                          Booking Sekarang
-                        </Button>
-                      </Link>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="cursor-pointer outline-black max-md:text-[10px]"
+                        onClick={() => handleClick(paket.name)}
+                      >
+                        <ShoppingCart />
+                        Booking Sekarang
+                      </Button>
                     </CardDescription>
                   </div>
                 </CardFooter>

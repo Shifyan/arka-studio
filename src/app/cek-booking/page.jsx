@@ -61,7 +61,6 @@ export default function CekBooking() {
         },
         body: JSON.stringify({ invoiceNumber }),
       });
-      console.log(response);
 
       // Refresh data setelah pembatalan berhasil
       if (response.ok) {
@@ -116,7 +115,6 @@ export default function CekBooking() {
         if (status === "CANCELED" || status === "COMPLETED") {
           setIsCanceled(true);
         }
-        console.log(dialogContent);
       } else {
         // Invoice tidak ditemukan atau error
         setDialogContent({
@@ -127,7 +125,6 @@ export default function CekBooking() {
         });
         setIsCanceled(false); // Reset status canceled jika invoice tidak ditemukan
       }
-      console.log(isCanceled);
     } catch (error) {
       console.error("Error:", error);
       setDialogContent({
@@ -141,10 +138,6 @@ export default function CekBooking() {
       setIsDialogOpen(true);
     }
   };
-
-  // useEffect(() => {
-  //   console.log(`${name}, ${invoiceNumber}`);
-  // }, [name, invoiceNumber]);
 
   return (
     <div className="flex flex-col min-h-screen">

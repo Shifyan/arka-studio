@@ -32,4 +32,3 @@ export function getNextThreeMonths() {
 
   return result;
 }
-console.log(getNextThreeMonths());

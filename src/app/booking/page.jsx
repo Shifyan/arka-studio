@@ -1,21 +1,12 @@
 "use client";
-import { useState, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState, useEffect, use } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CircleArrowLeft } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import useStore from "@/lib/store";
-import { Calendar } from "@/components/ui/calendar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -56,27 +47,15 @@ const formSchema = z.object({
 
 // PAGE BOOKING
 export default function Booking() {
-  const [nama, setNama] = useState("");
-  const [email, setEmail] = useState("");
-  const [noHp, setNoHp] = useState("");
-  const {
-    packages,
-    bookings,
-    fetchPackages,
-    fetchBookings,
-    getBookedSessionsForDate,
-    formatDate,
-  } = useStore();
+  const searchParams = useSearchParams();
+  const defaultPackageName = searchParams.get("packageName");
+  const [defaultPackageId, setdefaultPackageId] = useState("");
+  const { packages, fetchPackages, fetchBookings } = useStore();
   const [paymentMethods, setPaymentMethods] = useState([
     "Bayar Tunai",
     "Transfer",
   ]);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
-  const [date, setDate] = useState(new Date());
-  const [formattedDate, setFormattedDate] = useState("");
-  const [bookedSessionsForSelectedDate, setBookedSessionsForSelectedDate] =
-    useState([]);
-  const [availableSessionsCount, setAvailableSessionsCount] = useState("");
+
   const [session, setSession] = useState([
     { id: 1, time: "09:00 - 09:30" },
     { id: 2, time: "09:30 - 10:00" },
@@ -95,9 +74,7 @@ export default function Booking() {
     { id: 15, time: "16:00 - 16:30" },
     { id: 16, time: "16:30 - 17:00" },
   ]);
-  const [selectedSession, setSelectedSession] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [notes, setNotes] = useState("");
 
   // AlertDialog states
   const [alertDialog, setAlertDialog] = useState({
@@ -110,6 +87,21 @@ export default function Booking() {
     showCancel: false,
   });
 
+  // Cari ID Package
+  useEffect(() => {
+    defaultPackageName;
+    if (defaultPackageName) {
+      const packageId = packages.find((pkg) => {
+        if (pkg.name === defaultPackageName) {
+          pkg.id;
+          return pkg.id;
+        }
+        return " ";
+      });
+      setdefaultPackageId(packageId);
+    }
+  }, [packages]);
+
   // Form
   const methods = useForm({
     resolver: zodResolver(formSchema),
@@ -118,10 +110,14 @@ export default function Booking() {
       nama: "",
       email: "",
       noHp: "",
-      selectedPackage: "",
+      selectedPackage: defaultPackageId,
       paymentMethod: "",
       notes: "",
-      date: new Date(),
+      date: (() => {
+        const t = new Date();
+        t.setDate(t.getDate() + 1);
+        return t;
+      })(),
       sessionNumber: [],
     },
   });
@@ -153,18 +149,6 @@ export default function Booking() {
       ]);
     if (step === 2) valid = await trigger(["date"]);
     if (valid) setStep((s) => s + 1);
-    console.log(
-      watch([
-        "nama",
-        "email",
-        "noHp",
-        "notes",
-        "selectedPackage",
-        "paymentMethod",
-        "date",
-      ])
-    );
-    console.log(step);
   };
 
   const selectedPackage = useWatch({
@@ -172,56 +156,13 @@ export default function Booking() {
     name: "selectedPackage",
   });
 
-  useEffect(() => {
-    console.log(selectedPackage);
-  }, [selectedPackage]);
-
-  useEffect(() => {
-    console.log(step);
-  }, [step]);
-
   const onBack = () => setStep((s) => s - 1);
-
-  // useEffect(() => {
-  //   console.log(date);
-  // }, [date]);
 
   // Ambil Data ketika load halaman
   useEffect(() => {
     fetchPackages();
     fetchBookings();
   }, []);
-
-  // Update formatted date ketika date berubah
-  useEffect(() => {
-    if (date) {
-      setFormattedDate(formatDate(date));
-      // Update booked sessions untuk tanggal yang dipilih
-      const bookedSessions = getBookedSessionsForDate(date);
-      setBookedSessionsForSelectedDate(bookedSessions);
-      // Reset selected sessions ketika tanggal berubah
-      setSelectedSession([]);
-    }
-  }, [date, bookings]);
-
-  // Durasi Session
-  useEffect(() => {
-    if (selectedPackage) {
-      const found = packages.find((pkg) => pkg.id === selectedPackage);
-      if (found) {
-        let sessionDuration = found.duration / 30;
-        setAvailableSessionsCount(sessionDuration);
-      }
-    }
-  }, [selectedPackage]);
-
-  // useEffect(() => {
-  //   console.log(availableSessionsCount);
-  // }, [availableSessionsCount]);
-
-  // useEffect(() => {
-  //   console.log("Selected Session:", selectedSession);
-  // }, [selectedSession]);
 
   // Helper function untuk menampilkan alert dialog
   const showAlert = (
@@ -248,88 +189,6 @@ export default function Booking() {
     setAlertDialog((prev) => ({ ...prev, open: false }));
   };
 
-  // Submit Form
-  // const handleSubmit = async () => {
-  //   setIsSubmitting(true);
-
-  //   // Validasi data
-  //   if (
-  //     !nama ||
-  //     !email ||
-  //     !noHp ||
-  //     !selectedPackages ||
-  //     !selectedPaymentMethod
-  //   ) {
-  //     showAlert(
-  //       "warning",
-  //       "Data Tidak Lengkap",
-  //       "Harap lengkapi semua data diri, pilihan paket, dan metode pembayaran."
-  //     );
-  //     setIsSubmitting(false);
-  //     return;
-  //   }
-  //   if (selectedSession.length !== availableSessionsCount) {
-  //     showAlert(
-  //       "warning",
-  //       "Sesi Belum Dipilih",
-  //       `Anda harus memilih tepat ${availableSessionsCount} sesi berurutan.`
-  //     );
-  //     setIsSubmitting(false);
-  //     return;
-  //   }
-
-  //   const bookingData = {
-  //     name: nama,
-  //     email,
-  //     phone: noHp,
-  //     packageId: selectedPackages, // Gunakan ID paket
-  //     date: date.toISOString(), // Format tanggal ke ISO string
-  //     sessionNumbers: selectedSession.sort((a, b) => a - b),
-  //     notes,
-  //     paymentMethod: paymentMethod,
-  //   };
-
-  //   try {
-  //     const response = await fetch("/api/booking", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(bookingData),
-  //     });
-
-  //     const result = await response.json();
-
-  //     if (response.ok) {
-  //       showAlert(
-  //         "success",
-  //         "Booking Berhasil!",
-  //         `Booking Anda berhasil dibuat. Nomor Invoice: ${result.data.booking.invoiceNumber}`,
-  //         () => {
-  //           // Reset form atau redirect setelah user klik OK
-  //           window.location.reload();
-  //         },
-  //         "OK"
-  //       );
-  //     } else {
-  //       // Tangani error dari server (e.g., sesi sudah dibooking)
-  //       showAlert(
-  //         "error",
-  //         "Booking Gagal",
-  //         result.msg || "Terjadi kesalahan saat melakukan booking."
-  //       );
-  //     }
-  //   } catch (error) {
-  //     console.error("Error submitting booking:", error);
-  //     showAlert(
-  //       "error",
-  //       "Kesalahan Sistem",
-  //       "Terjadi kesalahan koneksi. Silakan periksa koneksi internet Anda dan coba lagi."
-  //     );
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
   const onSubmit = async (dataSubmit) => {
     setIsSubmitting(true);
     try {
@@ -357,7 +216,7 @@ export default function Booking() {
         showAlert(
           "success",
           "Booking Berhasil!",
-          `Booking Anda berhasil dibuat. Nomor Invoice: ${result.data.booking.invoiceNumber}`,
+          `Booking Anda berhasil dibuat. Nomor Invoice: ${result.data.booking.invoiceNumber}. \nCek Email anda untuk detail pesanan!`,
           () => {
             // Reset form atau redirect setelah user klik OK
             window.location.reload();
