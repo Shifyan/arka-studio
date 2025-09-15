@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <div className="py-6 sm:py-8 lg:py-[30px] overflow-hidden">
+    <div className="py-6 sm:py-8 lg:py-[5px] overflow-hidden">
       {/* Desktop Layout */}
       <div className="hidden lg:flex max-w-full">
         <div className="w-[668px] max-h-[670px] mt-[20px] me-[40px] ms-[10px] lg:ms-[110px] flex-shrink-0">

@@ -28,16 +28,9 @@ export default function SecondStep({ onNext, onBack, methods }) {
     const bookedSession = getBookedSessionsForDate(date);
     setBookedSessionsForSelectedDate(bookedSession);
 
-    console.log(date);
-
     // Reset Pilihan Sesi
     setValue("sessionNumber", []);
   }, [date]);
-
-  // useEffect(() => {
-  //   setValue("tanggal", formattedDate);
-  //   console.log(date);
-  // }, [formattedDate]);
 
   const selectCalendatHandle = (day, onChange) => {
     if (day) {
@@ -59,6 +52,14 @@ export default function SecondStep({ onNext, onBack, methods }) {
               className="w-full md:w-[380px]"
               captionLayout="dropdown"
               modifiersStyles={{ weekend: { color: "red" } }}
+              disabled={(date) => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const d = new Date(date);
+                d.setHours(0, 0, 0, 0);
+
+                return d <= today;
+              }}
             />
           )}
         />

@@ -84,10 +84,6 @@ export default function Booking() {
   });
 
   useEffect(() => {
-    console.log(date);
-  }, [date]);
-
-  useEffect(() => {
     fetchPackages();
     fetchBookings();
   }, []);
@@ -113,14 +109,6 @@ export default function Booking() {
       }
     }
   }, [selectedPackages]);
-
-  useEffect(() => {
-    console.log(availableSessionsCount);
-  }, [availableSessionsCount]);
-
-  useEffect(() => {
-    console.log("Selected Session:", selectedSession);
-  }, [selectedSession]);
 
   // Helper function untuk menampilkan alert dialog
   const showAlert = (
